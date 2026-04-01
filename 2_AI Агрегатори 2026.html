@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Агрегатори — Повна Карта 2026</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f4f0; color: #1a1a18; min-height: 100vh; padding: 24px 16px; }
+.container { max-width: 780px; margin: 0 auto; }
+h1 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+.subtitle { font-size: 13px; color: #73726c; margin-bottom: 20px; }
+
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+.tab {
+  padding: 5px 14px; border-radius: 20px; border: 1px solid #d3d1c7;
+  background: transparent; color: #73726c; cursor: pointer; font-size: 12px;
+  font-family: inherit; transition: all .15s;
+}
+.tab.active {
+  background: #fff; color: #1a1a18;
+  border-color: #888780; font-weight: 500;
+}
+.tab:hover:not(.active) { background: #eeecea; }
+
+.section-label {
+  font-size: 11px; font-weight: 500; color: #888780;
+  text-transform: uppercase; letter-spacing: .05em; margin: 14px 0 8px;
+}
+.cards { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+@media (max-width: 520px) { .cards { grid-template-columns: 1fr; } }
+.card {
+  border: 1px solid #d3d1c7; border-radius: 12px;
+  background: #fff; padding: 12px 14px; cursor: pointer;
+  transition: border-color .15s;
+}
+.card:hover { border-color: #888780; }
+.card.open { border-color: #888780; }
+.card-top { display: flex; align-items: flex-start; gap: 10px; }
+.card-icon {
+  width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center;
+  justify-content: center; font-size: 15px; flex-shrink: 0;
+  background: #f5f4f0; border: 1px solid #d3d1c7;
+}
+.card-info { flex: 1; min-width: 0; }
+.card-name { font-size: 13px; font-weight: 500; color: #1a1a18; }
+.card-sub { font-size: 11px; color: #888780; margin-top: 1px; }
+.badge-row { margin-top: 4px; display: flex; gap: 4px; flex-wrap: wrap; }
+.badge {
+  font-size: 10px; padding: 1px 6px; border-radius: 8px;
+  border: 1px solid #d3d1c7; color: #5f5e5a;
+}
+.badge-new { background: #EAF3DE; border-color: #C0DD97; color: #3B6D11; }
+.badge-acquired { background: #FAEEDA; border-color: #FAC775; color: #854F0B; }
+.card-price {
+  font-size: 11px; padding: 2px 7px; border-radius: 8px;
+  border: 1px solid #d3d1c7; color: #5f5e5a;
+  white-space: nowrap; flex-shrink: 0;
+}
+.card-body { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid #eeecea; }
+.card-body.open { display: block; }
+.models-row { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }
+.model-tag {
+  font-size: 10px; padding: 2px 7px; border-radius: 8px;
+  background: #f5f4f0; border: 1px solid #d3d1c7;
+  color: #5f5e5a;
+}
+.pros-cons { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+@media (max-width: 480px) { .pros-cons { grid-template-columns: 1fr; } }
+.pc-head { font-size: 10px; font-weight: 500; margin-bottom: 4px; }
+.pc-plus .pc-head { color: #3B6D11; }
+.pc-minus .pc-head { color: #A32D2D; }
+.pc-item { display: flex; gap: 5px; font-size: 11px; color: #5f5e5a; margin-bottom: 3px; line-height: 1.35; }
+.dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+.dp { background: #639922; }
+.dm { background: #E24B4A; }
+.best-for { font-size: 11px; color: #5f5e5a; margin-top: 6px; }
+.best-for span { color: #1a1a18; font-weight: 500; }
+.note { font-size: 11px; color: #888780; margin-top: 5px; font-style: italic; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>AI Агрегатори 2026</h1>
+  <p class="subtitle">Creative, Canvas/Node, API та відео-платформи — повна карта з моделями та плюсами/мінусами</p>
+
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-cat="all">Всі</button>
+    <button class="tab" data-cat="creative">🎨 Creative</button>
+    <button class="tab" data-cat="canvas">🔷 Canvas / Node</button>
+    <button class="tab" data-cat="api">⚙️ API / Dev</button>
+    <button class="tab" data-cat="video">🎬 Відео</button>
+  </div>
+  <div id="content"></div>
+</div>
+
+<script>
+const data = [
+  {
+    cat: "creative",
+    label: "🎨 Creative платформи — для дизайнерів і контент-мейкерів",
+    items: [
+      {
+        name: "Freepik AI Suite",
+        icon: "🖼️", sub: "freepik.com", price: "від $9/міс",
+        badges: [],
+        models: ["GPT Image 1.5", "Nano Banana Pro", "FLUX.2", "Seedream", "Ideogram", "Reve", "Mystic", "Imagen", "+28 більше"],
+        plus: ["36 моделей в одному місці", "Комбінація 4 моделей одночасно", "Редагування, фони, upscale, mockup", "SVG-експорт і stock-бібліотека"],
+        minus: ["Дорожчий за прямі API", "Деякі функції тільки на топ-плані"],
+        best: "Дизайнери, маркетологи, e-commerce"
+      },
+      {
+        name: "Leonardo AI",
+        icon: "🦁", sub: "leonardo.ai", price: "від $12/міс",
+        badges: [],
+        models: ["Lucid Origin Ultra", "Nano Banana", "Ideogram 3.0", "FLUX Kontext Max", "SDXL", "Alchemy"],
+        plus: ["Власна модель Lucid Origin Ultra", "Canvas-редактор для доопрацювання", "Game assets та 3D-текстури", "API для розробників"],
+        minus: ["Безкоштовний план дуже обмежений", "Інтерфейс перевантажений опціями"],
+        best: "Геймдев, концепт-арт, ілюстратори"
+      },
+      {
+        name: "Krea AI",
+        icon: "✨", sub: "krea.ai", price: "від $10/міс",
+        badges: [],
+        models: ["FLUX.1", "Stable Diffusion", "Realtime Canvas", "Custom LoRA"],
+        plus: ["Realtime: зображення оновлюється під час набору промпту", "LoRA-тренування без коду", "Upscaler та enhance вбудовані"],
+        minus: ["Менший вибір моделей", "Відсутній рендеринг тексту"],
+        best: "Живий брейнсторм, ітерація стилів, реклама"
+      },
+      {
+        name: "Canva AI",
+        icon: "🟣", sub: "canva.com", price: "від $15/міс",
+        badges: [],
+        models: ["Stable Diffusion", "DALL-E", "Imagen", "Adobe Firefly"],
+        plus: ["Найпростіший інтерфейс", "Повна інтеграція з дизайн-шаблонами", "Magic Edit, Background Remover"],
+        minus: ["Мінімальний контроль над генерацією", "Не для складних промптів"],
+        best: "SMM, маркетологи, некомерційні команди"
+      }
+    ]
+  },
+  {
+    cat: "canvas",
+    label: "🔷 Canvas / Node платформи — infinite canvas з кількома моделями",
+    items: [
+      {
+        name: "Flora",
+        icon: "🌿", sub: "florafauna.ai", price: "від $16/міс",
+        badges: [{ label: "$52M фінансування", cls: "badge-new" }],
+        models: ["GPT Image / GPT-5", "Gemini 2.5 Flash Image", "Imagen 4", "Veo 3", "Seedream 4.0", "Stable Diffusion 3.5", "Runway Gen-4", "Claude 3"],
+        plus: ["Node-система: кожне рішення — окремий вузол з розгалуженнями", "Style DNA — власний LoRA за 15-20 референсів", "Клієнти Nike, Levi's, Pentagram", "Collaborative canvas як Figma", "Текст + зображення + відео в одному потоці"],
+        minus: ["Node-система складна для новачків", "Дорожчий ніж прості creative-платформи", "Відео-ноди коштують багато кредитів"],
+        best: "Арт-директори, брендинг-агенції, дизайн-студії",
+        note: "Підтримується: Redpoint Ventures, Menlo Ventures, a16z Games, інвестори з Midjourney та Stability AI"
+      },
+      {
+        name: "Figma Weave (ex-Weavy)",
+        icon: "◆", sub: "weavy.ai → figma.com", price: "кредитна система",
+        badges: [{ label: "Куплена Figma (жовтень 2025)", cls: "badge-acquired" }],
+        models: ["FLUX.1", "Ideogram", "Nano Banana", "Seedream", "Veo", "Seedance"],
+        plus: ["Node-based: side-by-side порівняння моделей", "VFX-інструменти: освітлення, masking, color grading", "Заснована VFX-артистами з Тель-Авіва", "Поступово інтегрується у Figma (~$200M угода)"],
+        minus: ["Поки окремий продукт, не в Figma-платформі", "Ціна та плани в процесі переходу", "Невизначеність щодо повної інтеграції"],
+        best: "Дизайнери у Figma-екосистемі, VFX-артисти, маркетингові команди",
+        note: "Зараз доступний на weavy.ai — повна інтеграція у Figma очікується пізніше у 2026"
+      },
+      {
+        name: "Higgsfield AI",
+        icon: "🎬", sub: "higgsfield.ai", price: "від $19/міс",
+        badges: [],
+        models: ["Higgsfield Soul", "Reve", "Nano Banana", "Seedream 4.0", "FLUX Kontext Max", "GPT Image", "Kling 2.6"],
+        plus: ["Зображення + відео в одній платформі", "100+ кінематографічних preset-ефектів", "Face Swap Pro", "Topaz upscaler вбудований"],
+        minus: ["Кредити витрачаються швидко", "Більше орієнтований на відео ніж фото"],
+        best: "UGC-контент, відеомаркетинг, кінематографісти"
+      }
+    ]
+  },
+  {
+    cat: "api",
+    label: "⚙️ API-агрегатори — для розробників і автоматизації",
+    items: [
+      {
+        name: "FAL.AI",
+        icon: "⚡", sub: "fal.ai", price: "pay-per-use",
+        badges: [{ label: "50% ринку API", cls: "badge-new" }],
+        models: ["FLUX.2", "Kling", "Hailuo", "SD 3.5", "Recraft V4", "Z-Image", "Seedream", "+985 endpoints"],
+        plus: ["985+ ендпоінтів — найбільший вибір", "50% ринку image API (лідер)", "На 30-50% дешевший за Replicate", "Найшвидший інференс на ринку"],
+        minus: ["Тільки для розробників — немає UI", "Документація місцями неповна"],
+        best: "Розробники, SaaS-продукти, автоматизація"
+      },
+      {
+        name: "Replicate",
+        icon: "🔁", sub: "replicate.com", price: "pay-per-use",
+        badges: [],
+        models: ["FLUX.1", "SD 3.5", "Recraft", "SDXL", "Kandinsky", "+200 моделей"],
+        plus: ["Найкраща документація серед API", "Велика community кастомних моделей", "Простий Python/Node SDK"],
+        minus: ["На 30-50% дорожчий за FAL.AI", "Менший вибір (200 vs 985 моделей)"],
+        best: "Розробники, що цінують документацію і спільноту"
+      },
+      {
+        name: "Poe (Quora)",
+        icon: "🤖", sub: "poe.com", price: "від $20/міс",
+        badges: [],
+        models: ["FLUX.1", "Stable Diffusion", "Runway", "Kling", "ElevenLabs", "GPT-4o"],
+        plus: ["Текст + зображення + відео + аудіо разом", "Порівняння моделей side-by-side", "Community-боти та custom assistants"],
+        minus: ["Зображення — другорядна функція", "Обмежений контроль над промптами"],
+        best: "Експерименти, порівняння моделей, командна робота"
+      }
+    ]
+  },
+  {
+    cat: "video",
+    label: "🎬 Відео-орієнтовані платформи (з генерацією зображень)",
+    items: [
+      {
+        name: "Kling AI",
+        icon: "🎥", sub: "klingai.com", price: "від $10/міс + free",
+        badges: [],
+        models: ["Kling 3.0", "Kling O3", "Kling 2.6", "Kling 2.1"],
+        plus: ["65 безкоштовних кредитів при реєстрації", "Text-to-video + Image-to-video", "Upscaler та Background Remover вбудовані"],
+        minus: ["Більше відео ніж фото", "Художня якість поступається Midjourney"],
+        best: "Відеомаркетинг, UGC, e-commerce відео"
+      },
+      {
+        name: "Runway ML",
+        icon: "🛸", sub: "runwayml.com", price: "від $15/міс",
+        badges: [],
+        models: ["Gen-4.5", "Gen-3 Turbo", "FLUX.1 (image)"],
+        plus: ["Найкращий відеоредактор серед AI-платформ", "Motion Brush, Camera Controls", "Інтеграція з Adobe Premiere"],
+        minus: ["Дорогий для image-задач", "Зображення — не основний фокус"],
+        best: "Відеопродакшн, кіно, реклама"
+      }
+    ]
+  }
+];
+
+function renderAll(cat) {
+  const cont = document.getElementById('content');
+  cont.innerHTML = '';
+  data.forEach(section => {
+    if (cat !== 'all' && section.cat !== cat) return;
+    const lbl = document.createElement('div');
+    lbl.className = 'section-label';
+    lbl.textContent = section.label;
+    cont.appendChild(lbl);
+    const grid = document.createElement('div');
+    grid.className = 'cards';
+    section.items.forEach((item, idx) => {
+      const id = section.cat + '-' + idx;
+      const card = document.createElement('div');
+      card.className = 'card';
+      const badgesHtml = (item.badges || []).map(b => `<span class="badge ${b.cls}">${b.label}</span>`).join('');
+      card.innerHTML = `
+        <div class="card-top">
+          <div class="card-icon">${item.icon}</div>
+          <div class="card-info">
+            <div class="card-name">${item.name}</div>
+            <div class="card-sub">${item.sub}</div>
+            ${badgesHtml ? `<div class="badge-row">${badgesHtml}</div>` : ''}
+          </div>
+          <div class="card-price">${item.price}</div>
+        </div>
+        <div class="card-body" id="${id}">
+          <div class="models-row">${item.models.map(m => `<span class="model-tag">${m}</span>`).join('')}</div>
+          <div class="pros-cons">
+            <div class="pc-plus">
+              <div class="pc-head">+ Переваги</div>
+              ${item.plus.map(p => `<div class="pc-item"><span class="dot dp"></span><span>${p}</span></div>`).join('')}
+            </div>
+            <div class="pc-minus">
+              <div class="pc-head">− Мінуси</div>
+              ${item.minus.map(m => `<div class="pc-item"><span class="dot dm"></span><span>${m}</span></div>`).join('')}
+            </div>
+          </div>
+          <div class="best-for">Ідеально для: <span>${item.best}</span></div>
+          ${item.note ? `<div class="note">${item.note}</div>` : ''}
+        </div>`;
+      card.querySelector('.card-top').addEventListener('click', () => {
+        const body = document.getElementById(id);
+        const isOpen = body.classList.toggle('open');
+        card.classList.toggle('open', isOpen);
+      });
+      grid.appendChild(card);
+    });
+    cont.appendChild(grid);
+  });
+}
+
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    renderAll(tab.dataset.cat);
+  });
+});
+
+renderAll('all');
+</script>
+</body>
+</html>

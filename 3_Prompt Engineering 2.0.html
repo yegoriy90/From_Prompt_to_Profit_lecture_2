@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prompt Engineering 2.0 — Шпаргалка</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f4f0; color: #1a1a18; min-height: 100vh; padding: 24px 16px; }
+.container { max-width: 780px; margin: 0 auto; }
+h1 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+.subtitle { font-size: 13px; color: #73726c; margin-bottom: 20px; }
+
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+.tab {
+  padding: 5px 14px; border-radius: 20px; border: 1px solid #d3d1c7;
+  background: transparent; color: #73726c; cursor: pointer; font-size: 12px;
+  transition: all .15s; font-family: inherit;
+}
+.tab.active { background: #fff; color: #1a1a18; border-color: #888780; font-weight: 500; }
+.tab:hover:not(.active) { background: #eeecea; }
+
+.block { border-radius: 12px; padding: 12px 14px; margin-bottom: 8px; cursor: pointer; border: 1px solid transparent; transition: border-color .15s; }
+.block:hover { border-color: rgba(0,0,0,0.1); }
+.block-header { display: flex; align-items: center; gap: 10px; }
+.block-num { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; flex-shrink: 0; }
+.block-title { font-size: 13px; font-weight: 500; flex: 1; }
+.block-tag { font-size: 10px; padding: 2px 8px; border-radius: 8px; }
+.chevron { font-size: 10px; transition: transform .2s; color: #888; }
+.block-body { padding-top: 10px; margin-top: 10px; border-top: 1px solid rgba(0,0,0,0.1); }
+.block-desc { font-size: 12px; color: #5f5e5a; line-height: 1.6; margin-bottom: 10px; }
+.ex-box { background: #fff; border: 1px solid #d3d1c7; border-radius: 8px; padding: 10px 12px; }
+.ex-label { font-size: 10px; font-weight: 500; color: #888780; margin-bottom: 3px; }
+.ex-bad { font-size: 12px; color: #a32d2d; margin-bottom: 8px; }
+.ex-sep { border: none; border-top: 1px dashed #d3d1c7; margin: 6px 0; }
+.ex-good { font-size: 12px; color: #3b6d11; }
+
+.tech-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+@media (max-width: 520px) { .tech-grid { grid-template-columns: 1fr; } }
+.tech-card { border: 1px solid #d3d1c7; border-radius: 12px; padding: 12px; background: #fff; }
+.tech-icon { font-size: 18px; margin-bottom: 6px; }
+.lv-badge { display: inline-block; font-size: 10px; padding: 2px 7px; border-radius: 8px; margin-bottom: 6px; }
+.lv1 { background: #eaf3de; color: #3b6d11; }
+.lv2 { background: #faeeda; color: #854f0b; }
+.lv3 { background: #faece7; color: #993c1d; }
+.tech-name { font-size: 13px; font-weight: 500; color: #1a1a18; margin-bottom: 4px; }
+.tech-desc { font-size: 11px; color: #5f5e5a; line-height: 1.4; margin-bottom: 8px; }
+.tech-ex { background: #f5f4f0; border-left: 2px solid #d3d1c7; border-radius: 6px; padding: 8px; font-size: 11px; color: #5f5e5a; line-height: 1.5; font-style: italic; }
+
+.mtable { width: 100%; border-collapse: collapse; font-size: 12px; background: #fff; border-radius: 12px; overflow: hidden; border: 1px solid #d3d1c7; }
+.mtable th { text-align: left; padding: 10px 12px; font-size: 11px; font-weight: 500; color: #888780; border-bottom: 1px solid #d3d1c7; background: #f5f4f0; }
+.mtable td { padding: 10px 12px; border-bottom: 1px solid #eeecea; color: #5f5e5a; vertical-align: top; line-height: 1.4; }
+.mtable tr:last-child td { border-bottom: none; }
+.mname { font-weight: 500; color: #1a1a18; }
+.new-row td { background: #f0f8e8; }
+
+.builder-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+@media (max-width: 520px) { .builder-row { grid-template-columns: 1fr; } }
+.field-label { font-size: 11px; color: #888780; margin-bottom: 4px; display: block; }
+.b-input, .b-select {
+  width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid #d3d1c7;
+  background: #fff; color: #1a1a18; font-size: 12px; font-family: inherit; outline: none;
+  transition: border-color .15s;
+}
+.b-input:focus, .b-select:focus { border-color: #888780; }
+.output { background: #fff; border: 1px solid #d3d1c7; border-radius: 12px; padding: 14px; font-size: 13px; color: #1a1a18; line-height: 1.7; min-height: 80px; white-space: pre-wrap; word-break: break-word; margin-bottom: 8px; }
+.copy-btn { padding: 7px 18px; border-radius: 20px; font-size: 12px; border: 1px solid #d3d1c7; background: #fff; color: #5f5e5a; cursor: pointer; font-family: inherit; transition: all .15s; }
+.copy-btn:hover { background: #f5f4f0; color: #1a1a18; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Prompt Engineering 2.0</h1>
+  <p class="subtitle">Шпаргалка для лекції по генерації контенту в ШІ</p>
+
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('anatomy',this)">🧱 Анатомія</button>
+    <button class="tab" onclick="showTab('techniques',this)">⚡ Техніки 2.0</button>
+    <button class="tab" onclick="showTab('models',this)">🗂️ По моделях</button>
+    <button class="tab" onclick="showTab('builder',this)">🛠️ Конструктор</button>
+  </div>
+
+  <!-- ANATOMY -->
+  <div id="tab-anatomy">
+    <div class="block" style="background:#EAF3DE" onclick="toggle('a1')">
+      <div class="block-header">
+        <div class="block-num" style="background:#C0DD97;color:#3B6D11">1</div>
+        <div class="block-title" style="color:#3B6D11">Завдання (Job)</div>
+        <span class="block-tag" style="background:#C0DD97;color:#3B6D11">обов'язково</span>
+        <span class="chevron" id="a1-ch">▼</span>
+      </div>
+      <div id="a1" style="display:none" class="block-body">
+        <div class="block-desc">Перший рядок — одне речення: що саме потрібно, для кого, де буде використано. Це якір для всього промпту.</div>
+        <div class="ex-box">
+          <div class="ex-label">Слабко:</div>
+          <div class="ex-bad">"woman"</div>
+          <hr class="ex-sep">
+          <div class="ex-label">Сильно:</div>
+          <div class="ex-good">"Hero image для Instagram-реклами кавового бренду: жінка з кавою вранці вдома"</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block" style="background:#E6F1FB" onclick="toggle('a2')">
+      <div class="block-header">
+        <div class="block-num" style="background:#B5D4F4;color:#185FA5">2</div>
+        <div class="block-title" style="color:#185FA5">Суб'єкт + деталі</div>
+        <span class="block-tag" style="background:#B5D4F4;color:#185FA5">обов'язково</span>
+        <span class="chevron" id="a2-ch">▼</span>
+      </div>
+      <div id="a2" style="display:none" class="block-body">
+        <div class="block-desc">4–6 ключових деталей: матеріал, фактура, поза, вік, емоція, одяг, дія. Кожна деталь — коротка фраза, не одне слово.</div>
+        <div class="ex-box">
+          <div class="ex-label">Слабко:</div>
+          <div class="ex-bad">"red fox"</div>
+          <hr class="ex-sep">
+          <div class="ex-label">Сильно:</div>
+          <div class="ex-good">"руда лисиця, злегка вологе хутро, видихає пару в холодному повітрі, насторожений погляд вліво"</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block" style="background:#FAEEDA" onclick="toggle('a3')">
+      <div class="block-header">
+        <div class="block-num" style="background:#FAC775;color:#854F0B">3</div>
+        <div class="block-title" style="color:#854F0B">Стиль + медіум</div>
+        <span class="block-tag" style="background:#FAC775;color:#854F0B">важливо</span>
+        <span class="chevron" id="a3-ch">▼</span>
+      </div>
+      <div id="a3" style="display:none" class="block-body">
+        <div class="block-desc">Художній напрямок, техніка або камера. Можна поєднувати стилі: "ренесансний живопис + сучасна фотографія".</div>
+        <div class="ex-box">
+          <div class="ex-label">Слабко:</div>
+          <div class="ex-bad">"realistic"</div>
+          <hr class="ex-sep">
+          <div class="ex-label">Сильно:</div>
+          <div class="ex-good">"medium format camera, shallow depth of field, editorial photography style, desaturated tones"</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block" style="background:#FAECE7" onclick="toggle('a4')">
+      <div class="block-header">
+        <div class="block-num" style="background:#F5C4B3;color:#993C1D">4</div>
+        <div class="block-title" style="color:#993C1D">Освітлення</div>
+        <span class="block-tag" style="background:#F5C4B3;color:#993C1D">важливо</span>
+        <span class="chevron" id="a4-ch">▼</span>
+      </div>
+      <div id="a4" style="display:none" class="block-body">
+        <div class="block-desc">Освітлення — половина настрою зображення. Вкажи джерело, напрямок, якість та колірну температуру.</div>
+        <div class="ex-box">
+          <div class="ex-label">Слабко:</div>
+          <div class="ex-bad">"good lighting"</div>
+          <hr class="ex-sep">
+          <div class="ex-label">Сильно:</div>
+          <div class="ex-good">"м'яке бічне освітлення від вікна зліва, золота година, довгі тіні, warm 4000K tones"</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block" style="background:#EEEDFE" onclick="toggle('a5')">
+      <div class="block-header">
+        <div class="block-num" style="background:#CECBF6;color:#534AB7">5</div>
+        <div class="block-title" style="color:#534AB7">Композиція + кадр</div>
+        <span class="block-tag" style="background:#CECBF6;color:#534AB7">важливо</span>
+        <span class="chevron" id="a5-ch">▼</span>
+      </div>
+      <div id="a5" style="display:none" class="block-body">
+        <div class="block-desc">Кут знімання, відстань, правило третин, негативний простір. Особливо важливо для Product Shot і портрету.</div>
+        <div class="ex-box">
+          <div class="ex-label">Слабко:</div>
+          <div class="ex-bad">"close up"</div>
+          <hr class="ex-sep">
+          <div class="ex-label">Сильно:</div>
+          <div class="ex-good">"low angle shot, суб'єкт у лівій третині кадру, розмитий нейтральний фон, 85mm portrait lens"</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block" style="background:#E1F5EE" onclick="toggle('a6')">
+      <div class="block-header">
+        <div class="block-num" style="background:#9FE1CB;color:#0F6E56">6</div>
+        <div class="block-title" style="color:#0F6E56">Технічні параметри</div>
+        <span class="block-tag" style="background:#9FE1CB;color:#0F6E56">опційно</span>
+        <span class="chevron" id="a6-ch">▼</span>
+      </div>
+      <div id="a6" style="display:none" class="block-body">
+        <div class="block-desc">Роздільність, aspect ratio, негативний промпт (для SD), вагові коефіцієнти. Синтаксис залежить від моделі.</div>
+        <div class="ex-box">
+          <div class="ex-label">Слабко:</div>
+          <div class="ex-bad">"8k ultra hd"</div>
+          <hr class="ex-sep">
+          <div class="ex-label">Сильно:</div>
+          <div class="ex-good">"--ar 4:5 --style raw --no overexposed, blurry, watermark (Midjourney)"</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TECHNIQUES -->
+  <div id="tab-techniques" style="display:none">
+    <div class="tech-grid">
+      <div class="tech-card"><div class="tech-icon">📐</div><div class="lv-badge lv1">Базовий</div><div class="tech-name">Структурований промпт</div><div class="tech-desc">Чітка послідовність: Завдання → Суб'єкт → Стиль → Освітлення → Композиція → Параметри.</div><div class="tech-ex">"Hero shot кросівок Nike: білий кросівок на мокрому асфальті вночі, відбиття неону, overhead shot, контровий LED, --ar 1:1"</div></div>
+      <div class="tech-card"><div class="tech-icon">🔗</div><div class="lv-badge lv1">Базовий</div><div class="tech-name">Reference-based промпт</div><div class="tech-desc">Прикріплюєш зображення як reference + описуєш що саме перенести: стиль, освітлення, позу, але не людину.</div><div class="tech-ex">"[ref image] — використай тільки стиль освітлення та колірну гаму, намалюй нового персонажа"</div></div>
+      <div class="tech-card"><div class="tech-icon">🎭</div><div class="lv-badge lv2">Середній</div><div class="tech-name">Style stacking</div><div class="tech-desc">Поєднання двох несумісних стилів для унікального результату. Ренесанс + cyberpunk, акварель + 3D render.</div><div class="tech-ex">"Портрет у стилі голландського живопису XVII ст. з елементами cyberpunk: масляна текстура + неонові відблиски"</div></div>
+      <div class="tech-card"><div class="tech-icon">🧪</div><div class="lv-badge lv2">Середній</div><div class="tech-name">Negative prompting</div><div class="tech-desc">SD: explicit negative prompt. GPT/MJ: описуй чого НЕ хочеш через позитив — "чисте небо" замість "--no clouds".</div><div class="tech-ex">"Natural skin tones, matte finish — без дефектів, без штучних кольорів, без перенасиченості"</div></div>
+      <div class="tech-card"><div class="tech-icon">🔢</div><div class="lv-badge lv2">Середній</div><div class="tech-name">Вагові коефіцієнти</div><div class="tech-desc">Midjourney: слово::2 підсилює. SD: (слово:1.5). Балансуєш між елементами сцени.</div><div class="tech-ex">"sunset::2 beach::1 woman::0.8 — захід сонця домінує, жінка другорядна"</div></div>
+      <div class="tech-card"><div class="tech-icon">🔄</div><div class="lv-badge lv2">Середній</div><div class="tech-name">Iterative prompting</div><div class="tech-desc">Діалог з моделлю: генеруєш базу → описуєш що змінити → уточнюєш. Найефективніше у GPT Image та Nano Banana.</div><div class="tech-ex">"[після результату]: залиш ту саму композицію, але зміни освітлення на вечірнє та прибери фон"</div></div>
+      <div class="tech-card"><div class="tech-icon">🧩</div><div class="lv-badge lv3">Просунутий</div><div class="tech-name">Prompt chaining</div><div class="tech-desc">Генерація кількох зображень як єдиної системи: спочатку фон, потім персонаж, потім Inpainting.</div><div class="tech-ex">"Крок 1: тільки фон. Крок 2: персонаж на білому. Крок 3: compositing через Inpainting"</div></div>
+      <div class="tech-card"><div class="tech-icon">🤖</div><div class="lv-badge lv3">Просунутий</div><div class="tech-name">AI-assisted prompting</div><div class="tech-desc">Просиш ChatGPT або Claude написати промпт для іншої моделі. Особливо ефективно для Midjourney і FLUX.</div><div class="tech-ex">"Напиши Midjourney-промпт для luxury-парфумів: мінімалізм, осіння палітра, editorial style"</div></div>
+    </div>
+  </div>
+
+  <!-- MODELS -->
+  <div id="tab-models" style="display:none">
+    <table class="mtable">
+      <thead><tr><th>Модель</th><th>Стиль промпту</th><th>Ключова техніка</th><th>Уникати</th></tr></thead>
+      <tbody>
+        <tr><td><span class="mname">GPT Image 1.5</span></td><td>Абзац-речення</td><td>Пиши розгорнуто. Описуй контекст, мету, деталі. Multi-turn правки в діалозі.</td><td>Короткі ключові слова — модель їх ігнорує</td></tr>
+        <tr><td><span class="mname">Midjourney V8</span></td><td>Короткі фрази</td><td>Фрази через кому, максимум сигналу. Додавай --ar, --style, --no.</td><td>Довгі речення та пояснення знижують якість</td></tr>
+        <tr><td><span class="mname">FLUX.2</span></td><td>Природна мова</td><td>Природна мова + технічні деталі камери. "Shot on Canon EF 85mm f/1.4".</td><td>Надмірні художні метафори — модель буквальна</td></tr>
+        <tr><td><span class="mname">Stable Diffusion 3.5</span></td><td>Keywords + weights</td><td>(слово:1.5) для посилення. Обов'язково negative prompt. LoRA тегами.</td><td>Речення без вагових тегів — нестабільний результат</td></tr>
+        <tr><td><span class="mname">Ideogram 3.0</span></td><td>Mixed</td><td>Вказуй шрифт, розмір, колір, розміщення тексту явно. "Bold sans-serif centered top".</td><td>Не покладайся на дефолтну типографіку</td></tr>
+        <tr><td><span class="mname">Seedream 5.0</span></td><td>Short + precise</td><td>Одне речення з 5–7 деталей — оптимум. Короткі промпти перемагають довгі.</td><td>Орнаментальні описи дають розмиті результати</td></tr>
+        <tr class="new-row"><td><span class="mname">Nano Banana 2</span></td><td>Короткі + чіткі</td><td>Прості, конкретні промпти. Найкраще реагує на text-to-image без зайвих метафор. Підтримує 4K деталізацію.</td><td>Складні багатошарові сцени — дає варіативний результат</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- BUILDER -->
+  <div id="tab-builder" style="display:none">
+    <div class="builder-row">
+      <div><label class="field-label">1. Завдання</label><input class="b-input" id="b-job" placeholder="Hero image для Instagram бренду взуття" oninput="buildPrompt()"></div>
+      <div><label class="field-label">2. Суб'єкт</label><input class="b-input" id="b-subj" placeholder="білі кросівки на мокрому асфальті" oninput="buildPrompt()"></div>
+    </div>
+    <div class="builder-row">
+      <div><label class="field-label">3. Стиль</label>
+        <select class="b-select" id="b-style" onchange="buildPrompt()">
+          <option value="">— обери стиль —</option>
+          <option>editorial photography</option>
+          <option>product photography, studio shot</option>
+          <option>cinematic film still</option>
+          <option>hyperrealistic 3D render</option>
+          <option>oil painting, Renaissance style</option>
+          <option>minimalist flat design</option>
+          <option>fashion photography, Vogue style</option>
+          <option>macro photography</option>
+        </select>
+      </div>
+      <div><label class="field-label">4. Освітлення</label>
+        <select class="b-select" id="b-light" onchange="buildPrompt()">
+          <option value="">— обери освітлення —</option>
+          <option>soft window light, golden hour</option>
+          <option>dramatic side lighting, deep shadows</option>
+          <option>studio softbox, clean white background</option>
+          <option>neon backlight, cyberpunk atmosphere</option>
+          <option>natural daylight, overcast sky</option>
+          <option>candlelight, warm amber tones</option>
+          <option>high-key lighting, bright and airy</option>
+          <option>low-key lighting, moody and dark</option>
+        </select>
+      </div>
+    </div>
+    <div class="builder-row">
+      <div><label class="field-label">5. Композиція</label>
+        <select class="b-select" id="b-comp" onchange="buildPrompt()">
+          <option value="">— обери кадр —</option>
+          <option>overhead shot, top-down view</option>
+          <option>eye-level, 85mm portrait lens</option>
+          <option>low angle, dynamic perspective</option>
+          <option>rule of thirds, subject left</option>
+          <option>centered, symmetrical composition</option>
+          <option>wide shot, environmental context</option>
+          <option>extreme close-up, macro detail</option>
+        </select>
+      </div>
+      <div><label class="field-label">6. Модель</label>
+        <select class="b-select" id="b-model" onchange="buildPrompt()">
+          <option value="gpt">GPT Image 1.5</option>
+          <option value="mj">Midjourney V8</option>
+          <option value="flux">FLUX.2</option>
+          <option value="sd">Stable Diffusion 3.5</option>
+          <option value="seed">Seedream 5.0</option>
+          <option value="nb">Nano Banana 2</option>
+        </select>
+      </div>
+    </div>
+    <label class="field-label">Готовий промпт:</label>
+    <div class="output" id="b-output">Заповни поля вище — промпт сформується автоматично</div>
+    <button class="copy-btn" onclick="copyPrompt()">Скопіювати</button>
+  </div>
+</div>
+
+<script>
+function showTab(name, btn) {
+  ['anatomy','techniques','models','builder'].forEach(t => {
+    document.getElementById('tab-' + t).style.display = t === name ? 'block' : 'none';
+  });
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+}
+function toggle(id) {
+  const el = document.getElementById(id);
+  const ch = document.getElementById(id + '-ch');
+  const isOpen = el.style.display === 'block';
+  el.style.display = isOpen ? 'none' : 'block';
+  if (ch) ch.style.transform = isOpen ? '' : 'rotate(180deg)';
+}
+function buildPrompt() {
+  const job = document.getElementById('b-job').value.trim();
+  const subj = document.getElementById('b-subj').value.trim();
+  const style = document.getElementById('b-style').value;
+  const light = document.getElementById('b-light').value;
+  const comp = document.getElementById('b-comp').value;
+  const model = document.getElementById('b-model').value;
+  if (!job && !subj) { document.getElementById('b-output').textContent = 'Заповни поля вище — промпт сформується автоматично'; return; }
+  const parts = [job, subj, style, light, comp].filter(Boolean);
+  let result = '';
+  if (model === 'mj') result = parts.join(', ') + ' --ar 4:5 --style raw';
+  else if (model === 'sd') result = parts.join(', ') + '\n\nNegative prompt: blurry, low quality, watermark, distorted';
+  else if (model === 'seed') result = parts.slice(0, 4).join(', ');
+  else if (model === 'nb') result = parts.slice(0, 5).join(', ') + (parts.length ? ', 4K, sharp details' : '');
+  else if (model === 'gpt') result = [job && 'Завдання: ' + job + '.', subj && "Суб'єкт: " + subj + '.', style && 'Стиль: ' + style + '.', light && 'Освітлення: ' + light + '.', comp && 'Композиція: ' + comp + '.'].filter(Boolean).join(' ');
+  else result = parts.join(', ') + (style.includes('photography') ? ', shot on Canon EF 85mm f/1.4' : '');
+  document.getElementById('b-output').textContent = result;
+}
+function copyPrompt() {
+  const text = document.getElementById('b-output').textContent;
+  navigator.clipboard.writeText(text).catch(() => {});
+  const btn = document.querySelector('.copy-btn');
+  btn.textContent = 'Скопійовано!';
+  setTimeout(() => btn.textContent = 'Скопіювати', 1500);
+}
+</script>
+</body>
+</html>

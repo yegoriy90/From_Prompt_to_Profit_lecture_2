@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Image Models — Плюси та Мінуси 2026</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f4f0; color: #1a1a18; min-height: 100vh; padding: 24px 16px; }
+.container { max-width: 780px; margin: 0 auto; }
+h1 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+.subtitle { font-size: 13px; color: #73726c; margin-bottom: 20px; }
+
+.filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.filter-btn {
+  padding: 4px 12px; border-radius: 20px; border: 1px solid #d3d1c7;
+  background: transparent; color: #73726c; cursor: pointer; font-size: 12px;
+  transition: all .15s; font-family: inherit;
+}
+.filter-btn.active {
+  background: #fff; color: #1a1a18; border-color: #888780; font-weight: 500;
+}
+.filter-btn:hover:not(.active) { background: #eeecea; }
+
+.grid { display: flex; flex-direction: column; gap: 10px; }
+.card {
+  border: 1px solid #d3d1c7; border-radius: 12px;
+  background: #fff; overflow: hidden;
+}
+.card-header {
+  display: flex; align-items: center; gap: 12px; padding: 12px 14px;
+  cursor: pointer; user-select: none; transition: background .15s;
+}
+.card-header:hover { background: #fafaf8; }
+.model-badge {
+  font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 10px; flex-shrink: 0;
+}
+.badge-os  { background: #EAF3DE; color: #3B6D11; }
+.badge-api { background: #E6F1FB; color: #185FA5; }
+.badge-sub { background: #FAEEDA; color: #854F0B; }
+.card-title { font-size: 14px; font-weight: 500; color: #1a1a18; flex: 1; }
+.card-company { font-size: 12px; color: #73726c; }
+.chevron { font-size: 10px; color: #888; transition: transform .2s; }
+.chevron.open { transform: rotate(180deg); }
+.card-body { display: none; padding: 0 14px 14px; border-top: 1px solid #eeecea; }
+.card-body.open { display: block; }
+.use-tag {
+  display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 10px;
+  background: #f5f4f0; border: 1px solid #d3d1c7;
+  color: #5f5e5a; margin: 8px 4px 0 0;
+}
+.columns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+@media (max-width: 480px) { .columns { grid-template-columns: 1fr; } }
+.col-head { font-size: 11px; font-weight: 500; margin-bottom: 6px; }
+.col-plus .col-head { color: #3B6D11; }
+.col-minus .col-head { color: #A32D2D; }
+.item { display: flex; gap: 6px; font-size: 12px; color: #5f5e5a; margin-bottom: 5px; line-height: 1.4; }
+.dot { flex-shrink: 0; margin-top: 5px; width: 6px; height: 6px; border-radius: 50%; }
+.dot-plus  { background: #639922; }
+.dot-minus { background: #E24B4A; }
+.price-row { font-size: 12px; color: #73726c; margin-top: 8px; padding-top: 8px; border-top: 1px solid #eeecea; }
+.price-row span { color: #1a1a18; font-weight: 500; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>AI Image Models 2026</h1>
+  <p class="subtitle">Переваги, обмеження та ціни — інтерактивна картка по кожній моделі</p>
+
+  <div class="filters" id="filters">
+    <button class="filter-btn active" data-filter="all">Всі</button>
+    <button class="filter-btn" data-filter="os">Open Source</button>
+    <button class="filter-btn" data-filter="api">API</button>
+    <button class="filter-btn" data-filter="sub">Підписка</button>
+  </div>
+  <div class="grid" id="grid"></div>
+</div>
+
+<script>
+const models = [
+  {
+    name: "GPT Image 1.5",
+    company: "OpenAI",
+    type: "api",
+    badge: "API",
+    uses: ["Рекламні банери", "Текст у зображенні", "Product shots", "Ітеративне редагування"],
+    plus: [
+      "Найкращий рендеринг тексту в зображеннях (87% точність)",
+      "Чудово слідує складним деталізованим промптам",
+      "Інтегрований у ChatGPT без додаткової підписки",
+      "Зберігає контекст між ітераціями в діалозі",
+      "Найбільш передбачуваний результат серед усіх моделей"
+    ],
+    minus: [
+      "Складна токен-орієнтована ціна (важко прорахувати),",
+      "Менш художній, ніж Midjourney — результат технічний",
+      "Потребує налаштування API ключів для інтеграції",
+      "Немає нативного SVG або векторного виводу"
+    ],
+    price: "$0.04–$0.12 / зображення залежно від якості"
+  },
+  {
+    name: "Midjourney V8",
+    company: "Midjourney",
+    type: "sub",
+    badge: "Підписка",
+    uses: ["Художній контент", "Концепт-арт", "Модна фотографія", "Соц. медіа"],
+    plus: [
+      "Неперевершена художня якість і візуальна композиція",
+      "Нативна роздільність 2K, у 5 разів швидший за V6",
+      "Найбільша спільнота та бібліотека стилів",
+      "Ідеальне відчуття освітлення та глибини кадру"
+    ],
+    minus: [
+      "Немає офіційного API — неможливо автоматизувати",
+      "Тільки підписка: від $10 до $60/місяць",
+      "Слабкий рендеринг тексту всередині зображень",
+      "Генерує через Discord або вебінтерфейс — незручно для команди"
+    ],
+    price: "$10–$60 / місяць (підписка)"
+  },
+  {
+    name: "FLUX.2 / FLUX.1.1 Pro",
+    company: "Black Forest Labs",
+    type: "api",
+    badge: "API + OS",
+    uses: ["Фотореалізм", "Product photography", "Персонажі", "Брендинг"],
+    plus: [
+      "Топ-1 по фотореалізму: шкіра, текстури, освітлення як DSLR",
+      "Підтримка до 10 reference-зображень для консистентності",
+      "Hex-точний колір — ідеально для бренд-матеріалів",
+      "Доступні open-source версії (Schnell — Apache 2.0)",
+      "4.5 секунди на зображення — найшвидший серед якісних моделей"
+    ],
+    minus: [
+      "Слабкий рендеринг тексту всередині картинки",
+      "Більш складний у тонкому налаштуванні промптів",
+      "Платні версії потребують API-інтеграції"
+    ],
+    price: "~$0.03–$0.05 / зображення"
+  },
+  {
+    name: "Stable Diffusion 3.5",
+    company: "Stability AI",
+    type: "os",
+    badge: "Open Source",
+    uses: ["Локальна генерація", "Fine-tuning", "Кастомні моделі", "Приватні дані"],
+    plus: [
+      "Повністю відкритий код — запускається локально без обмежень",
+      "Безкоштовно при self-hosting на власному GPU",
+      "Максимальна гнучкість: LoRA, ControlNet, Inpainting",
+      "Повна приватність даних — ніхто не бачить ваші промпти",
+      "Велика екосистема готових моделей та розширень"
+    ],
+    minus: [
+      "Потребує потужного GPU (мінімум 8GB VRAM)",
+      "Складне налаштування для нетехнічних користувачів",
+      "Якість без тонкого налаштування поступається хмарним моделям",
+      "Потрібно самостійно оновлювати модель"
+    ],
+    price: "Безкоштовно (self-host) або ~$0.01 через API"
+  },
+  {
+    name: "Ideogram 3.0",
+    company: "Ideogram",
+    type: "api",
+    badge: "API",
+    uses: ["Логотипи з текстом", "Постери", "Маркетинг", "Шаблони"],
+    plus: [
+      "90–95% точність рендерингу тексту — краще за всіх",
+      "Розуміє кернінг, вирівнювання та стиль шрифту",
+      "Відмінний для повторюваних шаблонів (Style Reference)",
+      "Чистий і передбачуваний результат для брендингу"
+    ],
+    minus: [
+      "Менш сильний у фотореалізмі порівняно з FLUX",
+      "Не найкращий для складних художніх сцен",
+      "Менша community та менше кастомізації"
+    ],
+    price: "Безкоштовний план + ~$0.08 / зображення"
+  },
+  {
+    name: "Recraft V4",
+    company: "Recraft",
+    type: "api",
+    badge: "API",
+    uses: ["Логотипи", "Іконки", "Brand identity", "Веб-графіка"],
+    plus: [
+      "Єдина модель з нативним SVG-експортом",
+      "Топ-1 на HuggingFace для логотипів і векторів",
+      "Масштабується без втрати якості (вектор!)",
+      "Вбудовані інструменти стилізації бренду"
+    ],
+    minus: [
+      "Вузька спеціалізація — не для фотографій або персонажів",
+      "Слабший за конкурентів у складних ілюстраціях",
+      "Невелика community відносно Midjourney/SD"
+    ],
+    price: "~$0.04 / зображення"
+  },
+  {
+    name: "Adobe Firefly",
+    company: "Adobe",
+    type: "sub",
+    badge: "Підписка",
+    uses: ["Комерційний контент", "Photoshop інтеграція", "Enterprise", "Stock"],
+    plus: [
+      "Навчена на ліцензованих даних — юридично безпечна для комерції",
+      "IP-індемнізація для enterprise клієнтів",
+      "Глибока інтеграція з Photoshop, Illustrator, Premiere",
+      "Generative Fill та Generative Expand прямо у PS"
+    ],
+    minus: [
+      "Якість поступається FLUX та Midjourney в художніх задачах",
+      "Потребує підписки Creative Cloud (~$55/міс)",
+      "Менше творчої свободи через суворі фільтри контенту",
+      "Повільніший за спеціалізовані API-рішення"
+    ],
+    price: "Входить у Creative Cloud ($55+/місяць)"
+  },
+  {
+    name: "Nano Banana 2",
+    company: "Google (Gemini)",
+    type: "api",
+    badge: "API",
+    uses: ["Масова генерація", "Прототипування", "High-volume контент"],
+    plus: [
+      "Найшвидша модель: 1–3 секунди на зображення",
+      "Лідируючий Elo-рейтинг (1360) серед усіх моделей",
+      "Підтримка до 4K роздільності",
+      "Конкурентна ціна порівняно зі швидкістю"
+    ],
+    minus: [
+      "Менш передбачуваний стиль ніж GPT Image або FLUX",
+      "API потребує налаштування через Google AI Studio",
+      "Результати варіюються — менша консистентність",
+      "Слабший за Midjourney у художній якості"
+    ],
+    price: "$0.045–$0.151 / зображення (залежно від роздільності)"
+  },
+  {
+    name: "Seedream 5.0",
+    company: "ByteDance",
+    type: "api",
+    badge: "API",
+    uses: ["E-commerce", "Fashion", "Актуальний контент", "Відео-контент"],
+    plus: [
+      "Єдина модель з веб-пошуком у реальному часі",
+      "Генерація на основі поточних подій та новин",
+      "Один з найшвидших: обганяє Nano Banana Pro по кількості зображень",
+      "Example-based редагування: 'до/після' як навчання"
+    ],
+    minus: [
+      "Відносно новий гравець — менше перевірених кейсів",
+      "Реалізм поступається FLUX у студійних зйомках",
+      "Веб-пошук може додавати небажаний контекст до промптів"
+    ],
+    price: "Ціна через API-агрегатори (FAL.AI, Replicate)"
+  },
+  {
+    name: "Uni-1",
+    company: "Luma AI",
+    type: "api",
+    badge: "API",
+    uses: ["Складні сцени", "Reference-based", "Художні стилі", "Редагування"],
+    plus: [
+      "Унікальна авторегресивна архітектура: розуміння + генерація разом",
+      "Топ-1 за редагуваннями та style reference",
+      "Підтримує 76+ художніх стилів",
+      "Багатоетапне уточнення зображень у розмові",
+      "Конкурентна ціна: $0.09 за 2K"
+    ],
+    minus: [
+      "Дуже нова модель (березень 2026) — мало перевірених кейсів",
+      "Менша спільнота та документація",
+      "Програє Nano Banana у чистому text-to-image рейтингу"
+    ],
+    price: "~$0.09 / зображення (2K)"
+  },
+  {
+    name: "Z-Image Turbo",
+    company: "Alibaba",
+    type: "os",
+    badge: "Open Source",
+    uses: ["Локально на слабкому GPU", "Швидкий прототипинг", "Edge-деплой"],
+    plus: [
+      "Лише 6B параметрів — вміщується у 16GB VRAM",
+      "2.3 секунди на зображення на RTX 4090",
+      "Топ-1 серед open-source моделей у своєму класі",
+      "Ефективна архітектура S3-DiT — якість 20B+ моделей"
+    ],
+    minus: [
+      "Менша художня варіативність ніж великі моделі",
+      "Обмежена community поза китайськими платформами",
+      "Документація переважно китайською мовою"
+    ],
+    price: "Безкоштовно (self-host)"
+  }
+];
+
+const typeMap = { "API": "api", "API + OS": "api", "Open Source": "os", "Підписка": "sub" };
+
+function render(filter) {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  models.forEach((m, i) => {
+    const t = typeMap[m.badge] || 'api';
+    if (filter !== 'all' && t !== filter) return;
+    const card = document.createElement('div');
+    card.className = 'card';
+    const badgeClass = t === 'os' ? 'badge-os' : t === 'sub' ? 'badge-sub' : 'badge-api';
+    card.innerHTML = `
+      <div class="card-header" onclick="toggle(${i})">
+        <span class="model-badge ${badgeClass}">${m.badge}</span>
+        <span class="card-title">${m.name}</span>
+        <span class="card-company">${m.company}</span>
+        <span class="chevron" id="chev-${i}">▼</span>
+      </div>
+      <div class="card-body" id="body-${i}">
+        <div>${m.uses.map(u => `<span class="use-tag">${u}</span>`).join('')}</div>
+        <div class="columns">
+          <div class="col-plus">
+            <div class="col-head">+ Переваги</div>
+            ${m.plus.map(p => `<div class="item"><span class="dot dot-plus"></span><span>${p}</span></div>`).join('')}
+          </div>
+          <div class="col-minus">
+            <div class="col-head">− Обмеження</div>
+            ${m.minus.map(p => `<div class="item"><span class="dot dot-minus"></span><span>${p}</span></div>`).join('')}
+          </div>
+        </div>
+        <div class="price-row">Ціна: <span>${m.price}</span></div>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+function toggle(i) {
+  const body = document.getElementById('body-'+i);
+  const chev = document.getElementById('chev-'+i);
+  body.classList.toggle('open');
+  chev.classList.toggle('open');
+}
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    render(btn.dataset.filter);
+  });
+});
+
+render('all');
+</script>
+</body>
+</html>

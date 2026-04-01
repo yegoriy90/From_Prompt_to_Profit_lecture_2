@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Image-to-Video — AI відеогенерація 2026</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f4f0; color: #1a1a18; min-height: 100vh; padding: 24px 16px; }
+.container { max-width: 780px; margin: 0 auto; }
+h1 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+.subtitle { font-size: 13px; color: #73726c; margin-bottom: 20px; }
+
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+.tab { padding: 5px 14px; border-radius: 20px; border: 1px solid #d3d1c7; background: transparent; color: #73726c; cursor: pointer; font-size: 12px; transition: all .15s; font-family: inherit; }
+.tab.active { background: #fff; color: #1a1a18; border-color: #888780; font-weight: 500; }
+.tab:hover:not(.active) { background: #eeecea; }
+
+.models-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+@media (max-width: 520px) { .models-grid, .prompt-grid { grid-template-columns: 1fr; } }
+.model-card { border: 1px solid #d3d1c7; border-radius: 12px; padding: 12px 14px; background: #fff; cursor: pointer; transition: border-color .15s; }
+.model-card:hover, .model-card.open { border-color: #888780; }
+.model-header { display: flex; align-items: center; gap: 10px; }
+.model-logo { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; background: #f5f4f0; border: 1px solid #d3d1c7; }
+.model-info { flex: 1; }
+.model-name { font-size: 13px; font-weight: 500; color: #1a1a18; }
+.model-maker { font-size: 11px; color: #888780; }
+.model-badges { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px; }
+.badge { font-size: 10px; padding: 1px 6px; border-radius: 8px; border: 1px solid #d3d1c7; color: #5f5e5a; }
+.badge-audio { background: #e6f1fb; border-color: #b5d4f4; color: #185fa5; }
+.badge-hot { background: #faeeda; border-color: #fac775; color: #854f0b; }
+.badge-new { background: #faece7; border-color: #f5c4b3; color: #993c1d; font-weight: 500; }
+.badge-os { background: #eaf3de; border-color: #c0dd97; color: #3b6d11; }
+.chevron { font-size: 10px; color: #888; transition: transform .2s; }
+.model-body { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid #eeecea; }
+.model-body.open { display: block; }
+.model-desc { font-size: 12px; color: #5f5e5a; line-height: 1.5; margin-bottom: 8px; }
+.model-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px; }
+.stat { background: #f5f4f0; border-radius: 8px; padding: 6px 8px; }
+.stat-label { font-size: 10px; color: #888780; margin-bottom: 2px; }
+.stat-val { font-size: 12px; font-weight: 500; color: #1a1a18; }
+.prompt-box { background: #f5f4f0; border: 1px solid #d3d1c7; border-radius: 8px; padding: 8px 10px; }
+.prompt-label { font-size: 10px; font-weight: 500; color: #888780; margin-bottom: 3px; }
+.prompt-text { font-size: 11px; color: #3b6d11; line-height: 1.5; font-style: italic; }
+.best-for { font-size: 11px; color: #5f5e5a; margin-top: 6px; }
+.best-for span { font-weight: 500; color: #1a1a18; }
+.warn-note { font-size: 11px; color: #854f0b; background: #fef9f2; border: 1px solid #fac775; border-radius: 6px; padding: 5px 8px; margin-top: 6px; }
+
+.prompt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.ptip-card { border: 1px solid #d3d1c7; border-radius: 12px; padding: 12px 14px; background: #fff; }
+.ptip-num { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; flex-shrink: 0; margin-bottom: 6px; }
+.ptip-name { font-size: 13px; font-weight: 500; color: #1a1a18; margin-bottom: 4px; }
+.ptip-desc { font-size: 11px; color: #5f5e5a; line-height: 1.4; margin-bottom: 8px; }
+.ptip-ex { background: #f5f4f0; border-left: 2px solid #d3d1c7; border-radius: 6px; padding: 7px 9px; font-size: 11px; color: #5f5e5a; line-height: 1.5; font-style: italic; }
+
+.wf-list { display: flex; flex-direction: column; gap: 6px; }
+.wf-item { border: 1px solid #d3d1c7; border-radius: 12px; padding: 12px 14px; background: #fff; cursor: pointer; transition: border-color .15s; }
+.wf-item:hover { border-color: #888780; }
+.wf-hdr { display: flex; align-items: center; gap: 10px; }
+.wf-num { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; flex-shrink: 0; }
+.wf-title { font-size: 13px; font-weight: 500; color: #1a1a18; flex: 1; }
+.wf-time { font-size: 11px; color: #888780; }
+.wf-body { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid #eeecea; }
+.wf-body.open { display: block; }
+.wf-desc { font-size: 12px; color: #5f5e5a; line-height: 1.5; margin-bottom: 8px; }
+.tool-row { display: flex; flex-wrap: wrap; gap: 4px; }
+.tt { font-size: 11px; padding: 3px 8px; border-radius: 8px; border: 1px solid #d3d1c7; color: #5f5e5a; background: #f5f4f0; }
+.tt.rec { background: #eaf3de; border-color: #c0dd97; color: #3b6d11; }
+.tt.hot { background: #faeeda; border-color: #fac775; color: #854f0b; font-weight: 500; }
+
+.comp-table { width: 100%; border-collapse: collapse; font-size: 12px; background: #fff; border-radius: 12px; overflow: hidden; border: 1px solid #d3d1c7; }
+.comp-table th { text-align: left; padding: 8px 10px; font-size: 11px; font-weight: 500; color: #888780; border-bottom: 1px solid #d3d1c7; background: #f5f4f0; }
+.comp-table td { padding: 9px 10px; border-bottom: 1px solid #eeecea; color: #5f5e5a; vertical-align: top; line-height: 1.4; }
+.comp-table tr:last-child td { border-bottom: none; }
+.comp-table tr.new-model td { background: #fffbf5; }
+.mname { font-weight: 500; color: #1a1a18; }
+.win { color: #3b6d11; font-weight: 500; }
+.new-tag { font-size: 10px; background: #faece7; border: 1px solid #f5c4b3; color: #993c1d; padding: 1px 5px; border-radius: 6px; font-weight: 500; }
+.context-note { font-size: 11px; color: #5f5e5a; background: #fff; border: 1px solid #d3d1c7; border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Image-to-Video</h1>
+  <p class="subtitle">AI відеогенерація 2026 — моделі, промптинг, workflow, порівняння</p>
+
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('models',this)">🎬 Моделі</button>
+    <button class="tab" onclick="showTab('prompting',this)">✍️ Промптинг</button>
+    <button class="tab" onclick="showTab('workflow',this)">⚙️ Workflow</button>
+    <button class="tab" onclick="showTab('compare',this)">📊 Порівняння</button>
+  </div>
+
+  <!-- MODELS -->
+  <div id="tab-models">
+    <div class="models-grid">
+
+      <div class="model-card" id="m1">
+        <div class="model-header" onclick="toggleM('m1')"><div class="model-logo">🎥</div><div class="model-info"><div class="model-name">Veo 3.1</div><div class="model-maker">Google DeepMind</div><div class="model-badges"><span class="badge badge-audio">Аудіо нативно</span><span class="badge badge-hot">All-around #1</span></div></div><span class="chevron" id="m1-ch">▼</span></div>
+        <div class="model-body" id="m1-body">
+          <div class="model-desc">Найкращий all-around генератор відео 2026. Нативне синхронізоване аудіо. Ingredients-to-video — кілька reference-зображень як "інгредієнти" сцени. Після закриття Sora — лідер у класі cinematic realism.</div>
+          <div class="model-stats"><div class="stat"><div class="stat-label">Тривалість</div><div class="stat-val">до 8 сек</div></div><div class="stat"><div class="stat-label">Роздільність</div><div class="stat-val">1080p / 4K</div></div><div class="stat"><div class="stat-label">Ціна</div><div class="stat-val">$0.15/сек</div></div><div class="stat"><div class="stat-label">Доступ</div><div class="stat-val">Google Flow</div></div></div>
+          <div class="prompt-box"><div class="prompt-label">Промпт-формула:</div><div class="prompt-text">"[Camera: Sweeping drone shot] [Scene] [Action] [Context] [Style: 70mm cinematic, chiaroscuro lighting]"</div></div>
+          <div class="best-for">Ідеально для: <span>реклама з діалогом, кінематографічний B-roll, аудіо-відео контент</span></div>
+        </div>
+      </div>
+
+      <div class="model-card" id="m2">
+        <div class="model-header" onclick="toggleM('m2')"><div class="model-logo">⚡</div><div class="model-info"><div class="model-name">Kling 3.0</div><div class="model-maker">Kuaishou — лютий 2026</div><div class="model-badges"><span class="badge badge-new">Нова!</span><span class="badge badge-audio">Аудіо + 4K</span><span class="badge badge-hot">Топ I2V</span></div></div><span class="chevron" id="m2-ch">▼</span></div>
+        <div class="model-body" id="m2-body">
+          <div class="model-desc">Топ-1 image-to-video станом на 2026. MVL архітектура — текст, зображення, аудіо та відео в одному проході. 7-в-1 редактор, director-level camera controls. Motion Control — витяг руху з reference-відео та перенос на статичне зображення. Оцінка 8.1/10.</div>
+          <div class="model-stats"><div class="stat"><div class="stat-label">Тривалість</div><div class="stat-val">до 15 сек</div></div><div class="stat"><div class="stat-label">Роздільність</div><div class="stat-val">4K / 60fps</div></div><div class="stat"><div class="stat-label">Ціна</div><div class="stat-val">$0.126–0.168/сек</div></div><div class="stat"><div class="stat-label">Аудіо</div><div class="stat-val">6 мов, lip-sync</div></div></div>
+          <div class="prompt-box"><div class="prompt-label">Техніка — storyboard control:</div><div class="prompt-text">"Shot 1 (0-5s): wide establishing. Shot 2 (5-10s): medium, character speaks: '[текст]'. Shot 3 (10-15s): close-up reaction. Native audio: clear voice, no background music"</div></div>
+          <div class="best-for">Ідеально для: <span>кінематографічні ads, multi-shot narratives, lip-sync, motion capture</span></div>
+        </div>
+      </div>
+
+      <div class="model-card" id="m3">
+        <div class="model-header" onclick="toggleM('m3')"><div class="model-logo">🌀</div><div class="model-info"><div class="model-name">Seedance 2.0</div><div class="model-maker">ByteDance — лютий 2026</div><div class="model-badges"><span class="badge badge-new">Нова!</span><span class="badge">12 файлів</span><span class="badge badge-audio">Мультимодальна</span></div></div><span class="chevron" id="m3-ch">▼</span></div>
+        <div class="model-body" id="m3-body">
+          <div class="model-desc">Найбільш гнучкий multi-reference input у індустрії — до 12 файлів одночасно: 9 зображень + 3 відео + 3 аудіо. Дозволяє референсувати хореографію, camera movement, звук та персонажів одночасно. Доступна через CapCut та Dreamina.</div>
+          <div class="model-stats"><div class="stat"><div class="stat-label">Тривалість</div><div class="stat-val">до 15 сек</div></div><div class="stat"><div class="stat-label">Роздільність</div><div class="stat-val">2K</div></div><div class="stat"><div class="stat-label">Reference</div><div class="stat-val">до 12 файлів</div></div><div class="stat"><div class="stat-label">Доступ</div><div class="stat-val">CapCut / Dreamina</div></div></div>
+          <div class="prompt-box"><div class="prompt-label">Унікальна техніка — 12-file input:</div><div class="prompt-text">[img: персонаж] + [video: хореографія] + [audio: трек] → "character performs this dance with this music in this style"</div></div>
+          <div class="best-for">Ідеально для: <span>multi-reference сцени, motion replication, музичні відео</span></div>
+          <div class="warn-note">⚠️ Глобальний rollout обмежено через IP-суперечки з Голлівудом. Доступна в окремих країнах через CapCut/Dreamina.</div>
+        </div>
+      </div>
+
+      <div class="model-card" id="m4">
+        <div class="model-header" onclick="toggleM('m4')"><div class="model-logo">✂️</div><div class="model-info"><div class="model-name">Runway Gen-4.5</div><div class="model-maker">Runway</div><div class="model-badges"><span class="badge">Camera control</span><span class="badge badge-hot">VFX</span></div></div><span class="chevron" id="m4-ch">▼</span></div>
+        <div class="model-body" id="m4-body">
+          <div class="model-desc">Топ для творчого контролю та VFX. Multi-shot режим та аудіо з грудня 2025. Найкращий для агентської роботи та точних camera paths. Інтегрований з Adobe Premiere та Firefly.</div>
+          <div class="model-stats"><div class="stat"><div class="stat-label">Тривалість</div><div class="stat-val">до 16 сек</div></div><div class="stat"><div class="stat-label">Роздільність</div><div class="stat-val">1080p</div></div><div class="stat"><div class="stat-label">Ціна</div><div class="stat-val">від $15/міс</div></div><div class="stat"><div class="stat-label">Фішка</div><div class="stat-val">Multi-shot + VFX</div></div></div>
+          <div class="prompt-box"><div class="prompt-label">Техніка — фізичний промпт:</div><div class="prompt-text">"Physics: heavy sedan at velocity. Front hood crumples with high resistance, glass shatters with momentum carrying shards forward, chassis shudders and recoils"</div></div>
+          <div class="best-for">Ідеально для: <span>VFX, агентська робота, складні сцени</span></div>
+        </div>
+      </div>
+
+      <div class="model-card" id="m5">
+        <div class="model-header" onclick="toggleM('m5')"><div class="model-logo">🐬</div><div class="model-info"><div class="model-name">Hailuo 02</div><div class="model-maker">MiniMax</div><div class="model-badges"><span class="badge badge-hot">Обличчя №1</span></div></div><span class="chevron" id="m5-ch">▼</span></div>
+        <div class="model-body" id="m5-body">
+          <div class="model-desc">Найкращий для людських облич та мікроемоцій. Вірусні відео з "олімпійськими котами" — Hailuo. Стабільність обличчя між кадрами — найкраща для портретного контенту. Найдешевший варіант для людських сцен ($9.99/міс).</div>
+          <div class="model-stats"><div class="stat"><div class="stat-label">Тривалість</div><div class="stat-val">6–10 сек</div></div><div class="stat"><div class="stat-label">Роздільність</div><div class="stat-val">до 1080p</div></div><div class="stat"><div class="stat-label">Ціна</div><div class="stat-val">від $9.99/міс</div></div><div class="stat"><div class="stat-label">Фішка</div><div class="stat-val">Face stability</div></div></div>
+          <div class="prompt-box"><div class="prompt-label">Техніка — facial expression:</div><div class="prompt-text">"micro-expression: slight smile widening slowly, eyes glistening with emotion, subtle head tilt left, natural skin texture, 4K portrait, cinematic lighting"</div></div>
+          <div class="best-for">Ідеально для: <span>портрети, UGC з людьми, емоційні сцени</span></div>
+        </div>
+      </div>
+
+      <div class="model-card" id="m6">
+        <div class="model-header" onclick="toggleM('m6')"><div class="model-logo">🌙</div><div class="model-info"><div class="model-name">Luma Dream Machine (Ray 3)</div><div class="model-maker">Luma AI</div><div class="model-badges"><span class="badge">3D camera motion</span></div></div><span class="chevron" id="m6-ch">▼</span></div>
+        <div class="model-body" id="m6-body">
+          <div class="model-desc">Унікальне 3D-розуміння сцени — найкраще для camera movement та просторової глибини. Фіча Reframe дозволяє перекадрувати існуючі кліпи без перегенерації.</div>
+          <div class="model-stats"><div class="stat"><div class="stat-label">Тривалість</div><div class="stat-val">до 10 сек</div></div><div class="stat"><div class="stat-label">Роздільність</div><div class="stat-val">1080p</div></div><div class="stat"><div class="stat-label">Ціна</div><div class="stat-val">від $29.99/міс</div></div><div class="stat"><div class="stat-label">Фішка</div><div class="stat-val">Reframe + 3D</div></div></div>
+          <div class="prompt-box"><div class="prompt-label">Техніка — camera motion:</div><div class="prompt-text">"camera slowly orbits 180° around the subject, parallax depth visible in background, cinematic dolly-zoom effect at end"</div></div>
+          <div class="best-for">Ідеально для: <span>camera moves, архітектура, продуктові відео 360°</span></div>
+        </div>
+      </div>
+
+      <div class="model-card" id="m7">
+        <div class="model-header" onclick="toggleM('m7')"><div class="model-logo">🌐</div><div class="model-info"><div class="model-name">Wan 2.2</div><div class="model-maker">Alibaba (Open Source)</div><div class="model-badges"><span class="badge badge-os">Open Source</span><span class="badge">MoE</span></div></div><span class="chevron" id="m7-ch">▼</span></div>
+        <div class="model-body" id="m7-body">
+          <div class="model-desc">Найкраща open-source модель для I2V 2026. MoE архітектура. Запускається локально на RTX 4090 (720p). Безкоштовно, Apache 2.0. Ідеально для розробників і тих, хто потребує приватності.</div>
+          <div class="model-stats"><div class="stat"><div class="stat-label">Тривалість</div><div class="stat-val">5–6 сек</div></div><div class="stat"><div class="stat-label">Роздільність</div><div class="stat-val">720p</div></div><div class="stat"><div class="stat-label">Ціна</div><div class="stat-val">$0 self-host</div></div><div class="stat"><div class="stat-label">Ліцензія</div><div class="stat-val">Apache 2.0</div></div></div>
+          <div class="prompt-box"><div class="prompt-label">Де запустити:</div><div class="prompt-text">ComfyUI, HuggingFace, SiliconFlow API (~$0.003/сек), FAL.AI</div></div>
+          <div class="best-for">Ідеально для: <span>розробники, приватність, кастомні pipeline</span></div>
+        </div>
+      </div>
+
+      <div class="model-card" id="m8">
+        <div class="model-header" onclick="toggleM('m8')"><div class="model-logo">🦋</div><div class="model-info"><div class="model-name">Pika 2.5</div><div class="model-maker">Pika Labs</div><div class="model-badges"><span class="badge">Стиль</span><span class="badge">Free tier</span></div></div><span class="chevron" id="m8-ch">▼</span></div>
+        <div class="model-body" id="m8-body">
+          <div class="model-desc">Найшвидша ітерація для соцмереж. Кращий style transfer та спецефекти (Pikaffects). Щедрий безкоштовний план. Ідеальний для quick-turn UGC та вірусного контенту.</div>
+          <div class="model-stats"><div class="stat"><div class="stat-label">Тривалість</div><div class="stat-val">3–10 сек</div></div><div class="stat"><div class="stat-label">Роздільність</div><div class="stat-val">1080p</div></div><div class="stat"><div class="stat-label">Ціна</div><div class="stat-val">Free + $8/міс</div></div><div class="stat"><div class="stat-label">Фішка</div><div class="stat-val">Pikaffects</div></div></div>
+          <div class="prompt-box"><div class="prompt-label">Техніка — style transfer:</div><div class="prompt-text">"transform to [cyberpunk neon / watercolor / claymation], keep subject identity, smooth transition, vibrant color palette"</div></div>
+          <div class="best-for">Ідеально для: <span>соцмережі, вірусні ефекти, швидка ітерація</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PROMPTING -->
+  <div id="tab-prompting" style="display:none">
+    <div class="prompt-grid">
+      <div class="ptip-card"><div class="ptip-num" style="background:#eaf3de;color:#3b6d11">1</div><div class="ptip-name">Кінематографічна формула</div><div class="ptip-desc">Базова структура для будь-якої моделі: Camera + Scene + Action + Lighting + Style. Кінотермінологія різко покращує результат.</div><div class="ptip-ex">"[Slow dolly push-in] confident woman walks into modern office, morning backlight through windows, 35mm film grain, warm tones"</div></div>
+      <div class="ptip-card"><div class="ptip-num" style="background:#e6f1fb;color:#185fa5">2</div><div class="ptip-name">Фізичний промпт (Runway)</div><div class="ptip-desc">Замість зовнішності — сили та причинно-наслідкові зв'язки. Runway Gen-4.5 реагує на фізику набагато краще ніж на слово "realistic".</div><div class="ptip-ex">"Physics: heavy bottle has mass. Falls → impacts floor → kinetic energy → crack propagation → fragments scatter radially"</div></div>
+      <div class="ptip-card"><div class="ptip-num" style="background:#faeeda;color:#854f0b">3</div><div class="ptip-name">Storyboard control (Kling 3.0)</div><div class="ptip-desc">Kling 3.0 розуміє покадровий сценарій. Описуй кожен шот із тривалістю, ракурсом та діалогом окремо.</div><div class="ptip-ex">"Shot 1 (0-5s): wide establishing. Shot 2 (5-10s): medium, character: 'text'. Shot 3 (10-15s): close-up reaction. No background noise"</div></div>
+      <div class="ptip-card"><div class="ptip-num" style="background:#faece7;color:#993c1d">4</div><div class="ptip-name">12-file input (Seedance 2.0)</div><div class="ptip-desc">Seedance приймає до 12 файлів одночасно. Зображення задає стиль, відео — рух, аудіо — ритм і музику.</div><div class="ptip-ex">[img: персонаж] + [video: танець] + [audio: трек] → "character performs this dance with this music in this style"</div></div>
+      <div class="ptip-card"><div class="ptip-num" style="background:#eeedfe;color:#534ab7">5</div><div class="ptip-name">Ingredients-to-video (Veo 3.1)</div><div class="ptip-desc">Veo 3.1 підтримує кілька reference-зображень як "інгредієнти". Кожне фото визначає окремий елемент сцени.</div><div class="ptip-ex">"[ref1: product] + [ref2: location] + [ref3: lighting style] → product demo in that location with that aesthetic"</div></div>
+      <div class="ptip-card"><div class="ptip-num" style="background:#e1f5ee;color:#0f6e56">6</div><div class="ptip-name">Мінімальний рух першим</div><div class="ptip-desc">Починай з повільного руху, потім масштабуй. Складна динаміка ламає ідентичність набагато швидше ніж плавний рух.</div><div class="ptip-ex">"Subtle camera drift right, gentle steam rising from coffee, minimal motion — product label stays perfectly visible"</div></div>
+      <div class="ptip-card"><div class="ptip-num" style="background:#f1efe8;color:#5f5e5a">7</div><div class="ptip-name">Multi-model стратегія</div><div class="ptip-desc">Генеруй той самий промпт на 2–3 моделях, порівнюй результати. Найкращі команди не прив'язуються до однієї платформи.</div><div class="ptip-ex">Veo 3.1 (аудіо) + Kling 3.0 (storyboard) + Runway (VFX) = обираєш найкращий кліп під задачу</div></div>
+      <div class="ptip-card"><div class="ptip-num" style="background:#fbebeb;color:#a32d2d">8</div><div class="ptip-name">Негативний промпт</div><div class="ptip-desc">Особливо важливо для Kling та Wan. Запобігає типовим артефактам.</div><div class="ptip-ex">"No camera shake, no morphing hands, no face distortion, no background music, no watermark, no abrupt cuts"</div></div>
+    </div>
+  </div>
+
+  <!-- WORKFLOW -->
+  <div id="tab-workflow" style="display:none">
+    <div class="wf-list">
+      <div class="wf-item" id="wf1"><div class="wf-hdr" onclick="toggleWf('wf1')"><div class="wf-num" style="background:#eaf3de;color:#3b6d11">1</div><div class="wf-title">Підготовка keyframe</div><span class="wf-time">~10 хв</span><span class="chevron" id="wf1-ch">▼</span></div><div class="wf-body" id="wf1-body"><div class="wf-desc">Якість відео = якість вхідного зображення. Генеруй keyframe через image-модель. Чим детальніший keyframe — тим менше відеомодель "вигадує" і більше стабільності у русі.</div><div class="tool-row"><span class="tt hot">Nano Banana Pro</span><span class="tt rec">GPT Image 1.5</span><span class="tt rec">FLUX.2</span><span class="tt">Midjourney V8</span><span class="tt">Kling 3.0 Image</span></div></div></div>
+      <div class="wf-item" id="wf2"><div class="wf-hdr" onclick="toggleWf('wf2')"><div class="wf-num" style="background:#e6f1fb;color:#185fa5">2</div><div class="wf-title">Вибір моделі під задачу</div><span class="wf-time">~2 хв</span><span class="chevron" id="wf2-ch">▼</span></div><div class="wf-body" id="wf2-body"><div class="wf-desc">Немає "найкращої" — є правильна для задачі. Аудіо? → Veo або Kling 3.0. Multi-reference? → Seedance 2.0. Обличчя? → Hailuo. VFX? → Runway. Open-source? → Wan 2.2.</div><div class="tool-row"><span class="tt">Аудіо → Veo 3.1 / Kling 3.0</span><span class="tt">Multi-ref → Seedance 2.0</span><span class="tt">Обличчя → Hailuo 02</span><span class="tt">VFX → Runway</span><span class="tt">Free → Wan 2.2</span></div></div></div>
+      <div class="wf-item" id="wf3"><div class="wf-hdr" onclick="toggleWf('wf3')"><div class="wf-num" style="background:#faeeda;color:#854f0b">3</div><div class="wf-title">Генерація на 2–3 моделях паралельно</div><span class="wf-time">~15 хв</span><span class="chevron" id="wf3-ch">▼</span></div><div class="wf-body" id="wf3-body"><div class="wf-desc">Запускай той самий промпт + keyframe на кількох моделях одночасно. 3–5 варіантів на кожній. Без порівняння — сліпий вибір.</div><div class="tool-row"><span class="tt hot">Kling 3.0</span><span class="tt hot">Seedance 2.0</span><span class="tt rec">Veo 3.1</span><span class="tt rec">Runway Gen-4.5</span><span class="tt">Hailuo 02</span></div></div></div>
+      <div class="wf-item" id="wf4"><div class="wf-hdr" onclick="toggleWf('wf4')"><div class="wf-num" style="background:#faece7;color:#993c1d">4</div><div class="wf-title">Відбір та стиковка кліпів</div><span class="wf-time">~20 хв</span><span class="chevron" id="wf4-ch">▼</span></div><div class="wf-body" id="wf4-body"><div class="wf-desc">Відбираємо найкращі кліпи та стикуємо у фінальне відео. Для seamless transitions — останній кадр попереднього кліпу як initial frame наступного ("last-frame-to-first-frame" техніка).</div><div class="tool-row"><span class="tt rec">CapCut</span><span class="tt rec">DaVinci Resolve</span><span class="tt">Adobe Premiere</span><span class="tt">Runway Editor</span></div></div></div>
+      <div class="wf-item" id="wf5"><div class="wf-hdr" onclick="toggleWf('wf5')"><div class="wf-num" style="background:#eeedfe;color:#534ab7">5</div><div class="wf-title">Аудіо та фінальний монтаж</div><span class="wf-time">~15 хв</span><span class="chevron" id="wf5-ch">▼</span></div><div class="wf-body" id="wf5-body"><div class="wf-desc">Якщо не використовував Veo, Kling 3.0 або Seedance 2.0 з нативним аудіо — додаємо музику, SFX та voiceover окремо.</div><div class="tool-row"><span class="tt hot">ElevenLabs (voiceover)</span><span class="tt rec">Suno AI (музика)</span><span class="tt">Udio (музика)</span><span class="tt rec">Adobe Audition</span><span class="tt">Freesound (SFX)</span></div></div></div>
+      <div class="wf-item" id="wf6"><div class="wf-hdr" onclick="toggleWf('wf6')"><div class="wf-num" style="background:#e1f5ee;color:#0f6e56">6</div><div class="wf-title">Upscale та експорт</div><span class="wf-time">~10 хв</span><span class="chevron" id="wf6-ch">▼</span></div><div class="wf-body" id="wf6-body"><div class="wf-desc">Topaz Video AI — найкращий video upscaler. Kling 3.0 підтримує нативний 16-bit HDR та EXR для VFX pipeline. MP4 H.264 для соцмереж, ProRes для монтажу.</div><div class="tool-row"><span class="tt hot">Topaz Video AI</span><span class="tt rec">DaVinci Resolve</span><span class="tt">Runway</span><span class="tt rec">Handbrake (export)</span></div></div></div>
+    </div>
+  </div>
+
+  <!-- COMPARE -->
+  <div id="tab-compare" style="display:none">
+    <div class="context-note">⚡ Актуально на березень 2026 — Sora закрита 24 березня 2026 (OpenAI вийшла з ринку відео). App закривається 26 квітня, API — 24 вересня 2026.</div>
+    <table class="comp-table">
+      <thead><tr><th>Модель</th><th>Дата</th><th>Тривалість</th><th>Аудіо</th><th>Reference</th><th>Роздільність</th><th>Ідеально для</th></tr></thead>
+      <tbody>
+        <tr><td><span class="mname">Veo 3.1</span></td><td>2025</td><td>до 8 сек</td><td class="win">✓ нативне</td><td>Ingredients (img)</td><td>4K</td><td>Аудіо-відео реклама</td></tr>
+        <tr class="new-model"><td><span class="mname">Kling 3.0</span> <span class="new-tag">Нова</span></td><td>лют. 2026</td><td class="win">до 15 сек</td><td class="win">✓ 6 мов</td><td>Image + video</td><td class="win">4K / 60fps</td><td>Storyboard, lip-sync</td></tr>
+        <tr class="new-model"><td><span class="mname">Seedance 2.0</span> <span class="new-tag">Нова</span></td><td>лют. 2026</td><td>до 15 сек</td><td class="win">✓ нативне</td><td class="win">9 img + 3 vid + 3 aud</td><td>2K</td><td>Multi-reference сцени</td></tr>
+        <tr><td><span class="mname">Runway Gen-4.5</span></td><td>2025</td><td>до 16 сек</td><td>✓ (груд. 2025)</td><td>Image + video</td><td>1080p</td><td>VFX, агентська</td></tr>
+        <tr><td><span class="mname">Hailuo 02</span></td><td>2025</td><td>6–10 сек</td><td>Немає</td><td>Зображення</td><td>1080p</td><td>Обличчя, емоції</td></tr>
+        <tr><td><span class="mname">Luma Ray 3</span></td><td>2025</td><td>до 10 сек</td><td>Немає</td><td>Зображення</td><td>1080p</td><td>Camera motion, 3D</td></tr>
+        <tr><td><span class="mname">Wan 2.2</span></td><td>2025</td><td>5–6 сек</td><td>Немає</td><td>Зображення</td><td>720p</td><td class="win">$0 / Open Source</td></tr>
+        <tr><td><span class="mname">Pika 2.5</span></td><td>2025</td><td>3–10 сек</td><td>Немає</td><td>Зображення</td><td>1080p</td><td>Стиль, вірусний</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<script>
+function showTab(name, btn) {
+  ['models','prompting','workflow','compare'].forEach(t => {
+    document.getElementById('tab-' + t).style.display = t === name ? 'block' : 'none';
+  });
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+}
+function toggleM(id) {
+  const body = document.getElementById(id+'-body');
+  const ch = document.getElementById(id+'-ch');
+  const card = document.getElementById(id);
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  card.classList.toggle('open', !isOpen);
+  ch.style.transform = isOpen ? '' : 'rotate(180deg)';
+}
+function toggleWf(id) {
+  const body = document.getElementById(id+'-body');
+  const ch = document.getElementById(id+'-ch');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  ch.style.transform = isOpen ? '' : 'rotate(180deg)';
+}
+</script>
+</body>
+</html>

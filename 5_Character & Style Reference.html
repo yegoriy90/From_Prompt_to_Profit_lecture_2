@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Character & Style Reference — Nano Banana Pro</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f4f0; color: #1a1a18; min-height: 100vh; padding: 24px 16px; }
+.container { max-width: 780px; margin: 0 auto; }
+h1 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+.subtitle { font-size: 13px; color: #73726c; margin-bottom: 20px; }
+
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+.tab { padding: 5px 14px; border-radius: 20px; border: 1px solid #d3d1c7; background: transparent; color: #73726c; cursor: pointer; font-size: 12px; transition: all .15s; font-family: inherit; }
+.tab.active { background: #fff; color: #1a1a18; border-color: #888780; font-weight: 500; }
+.tab:hover:not(.active) { background: #eeecea; }
+
+.hero { background: #fff; border: 1px solid #d3d1c7; border-radius: 12px; padding: 14px 16px; margin-bottom: 12px; }
+.hero-title { font-size: 14px; font-weight: 600; color: #1a1a18; margin-bottom: 6px; }
+.hero-desc { font-size: 12px; color: #5f5e5a; line-height: 1.5; }
+.caps-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
+.cap { background: #f5f4f0; border: 1px solid #d3d1c7; border-radius: 8px; padding: 8px 10px; text-align: center; }
+.cap-val { font-size: 16px; font-weight: 600; color: #1a1a18; }
+.cap-lbl { font-size: 10px; color: #888780; margin-top: 2px; }
+
+.acc-list { display: flex; flex-direction: column; gap: 8px; }
+.acc { border: 1px solid #d3d1c7; border-radius: 12px; background: #fff; overflow: hidden; }
+.acc-hdr { padding: 12px 14px; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: background .15s; }
+.acc-hdr:hover { background: #fafaf8; }
+.acc-icon { font-size: 18px; flex-shrink: 0; }
+.acc-info { flex: 1; }
+.acc-title { font-size: 13px; font-weight: 500; color: #1a1a18; }
+.acc-sub { font-size: 11px; color: #888780; margin-top: 2px; }
+.chevron { font-size: 10px; color: #888; transition: transform .2s; }
+.acc-body { display: none; padding: 0 14px 14px; border-top: 1px solid #eeecea; }
+.acc-body.open { display: block; }
+
+.section-label { font-size: 10px; font-weight: 500; color: #888780; text-transform: uppercase; letter-spacing: .5px; margin: 12px 0 6px; }
+.desc-text { font-size: 12px; color: #5f5e5a; line-height: 1.6; margin-bottom: 10px; }
+
+.input-scheme { background: #f5f4f0; border: 1px solid #d3d1c7; border-radius: 10px; padding: 12px; margin-bottom: 10px; }
+.input-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 6px; }
+.input-box { display: flex; align-items: center; gap: 6px; background: #fff; border: 1px solid #d3d1c7; border-radius: 8px; padding: 5px 10px; }
+.input-box.key { border-color: #fac775; background: #fffbf5; }
+.input-emoji { font-size: 14px; }
+.input-lbl { font-size: 11px; color: #1a1a18; font-weight: 500; }
+.input-sub { font-size: 10px; color: #888780; }
+.output-box { background: #eaf3de; border: 1px solid #c0dd97; border-radius: 8px; padding: 8px 10px; display: flex; align-items: center; gap: 8px; }
+.out-emoji { font-size: 16px; }
+.out-text { font-size: 12px; color: #3b6d11; font-weight: 500; }
+
+.prompt-step { background: #f5f4f0; border: 1px solid #d3d1c7; border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; }
+.step-num { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; font-size: 10px; font-weight: 500; margin-right: 6px; flex-shrink: 0; }
+.step-label { font-size: 11px; font-weight: 500; color: #1a1a18; margin-bottom: 6px; display: flex; align-items: center; }
+.prompt-code { font-size: 11px; color: #3b6d11; line-height: 1.7; font-style: italic; background: #fff; border: 1px solid #d3d1c7; border-radius: 8px; padding: 10px 12px; margin-bottom: 6px; }
+.prompt-note { font-size: 10px; color: #888780; margin-top: 5px; }
+
+.tag-row { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+.tag { font-size: 10px; padding: 2px 7px; border-radius: 8px; background: #fff; border: 1px solid #d3d1c7; color: #5f5e5a; }
+.tag.hot { background: #faeeda; border-color: #fac775; color: #854f0b; }
+.tag.rec { background: #eaf3de; border-color: #c0dd97; color: #3b6d11; }
+
+.compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+@media (max-width: 520px) { .compare-grid, .tips-grid { grid-template-columns: 1fr; } }
+.cmp-card { border: 1px solid #d3d1c7; border-radius: 12px; padding: 12px 14px; background: #fff; }
+.cmp-title { font-size: 12px; font-weight: 500; color: #1a1a18; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+.cmp-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #eeecea; }
+.cmp-row:last-child { border-bottom: none; }
+.cmp-key { font-size: 11px; color: #5f5e5a; }
+.cmp-val { font-size: 11px; font-weight: 500; }
+.win { color: #3b6d11; }
+.lose { color: #a32d2d; }
+.mid { color: #854f0b; }
+
+.tips-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.tip { border: 1px solid #d3d1c7; border-radius: 10px; padding: 10px 12px; background: #fff; }
+.tip-icon { font-size: 16px; margin-bottom: 4px; }
+.tip-title { font-size: 12px; font-weight: 500; color: #1a1a18; margin-bottom: 4px; }
+.tip-text { font-size: 11px; color: #5f5e5a; line-height: 1.4; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Character & Style Reference</h1>
+  <p class="subtitle">Практичний розбір на Nano Banana Pro — рекламні кампанії та I2V pipeline</p>
+
+  <div class="hero">
+    <div class="hero-title">🍌 Nano Banana Pro = Gemini 3 Pro Image</div>
+    <div class="hero-desc">Найпотужніша нативна підтримка reference серед усіх генеративних моделей — без додаткових плагінів, LoRA або ComfyUI. Консистентність прямо в діалозі.</div>
+    <div class="caps-row">
+      <div class="cap"><div class="cap-val">14</div><div class="cap-lbl">max reference зображень</div></div>
+      <div class="cap"><div class="cap-val">5</div><div class="cap-lbl">персонажів одночасно</div></div>
+      <div class="cap"><div class="cap-val">4K</div><div class="cap-lbl">нативна роздільність</div></div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('how',this)">⚙️ Як це працює</button>
+    <button class="tab" onclick="showTab('character',this)">👤 Character Ref</button>
+    <button class="tab" onclick="showTab('style',this)">🎨 Style Ref</button>
+    <button class="tab" onclick="showTab('advanced',this)">🚀 Просунуто</button>
+    <button class="tab" onclick="showTab('vs',this)">📊 vs інші моделі</button>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div id="tab-how">
+    <div class="section-label">Механіка роботи</div>
+    <div class="desc-text">На відміну від Midjourney (де є окремі параметри --cref / --sref) або SD (де потрібен IP-Adapter), Nano Banana Pro розуміє reference через <strong>природну мову + прикріплені зображення</strong>. Ти описуєш словами що саме взяти з кожного reference.</div>
+
+    <div class="input-scheme">
+      <div class="section-label" style="margin-top:0">Базова схема input → output</div>
+      <div class="input-row">
+        <div class="input-box key"><span class="input-emoji">🖼️</span><div><div class="input-lbl">Image 1</div><div class="input-sub">Персонаж / обличчя</div></div></div>
+        <div class="input-box"><span class="input-emoji">🖼️</span><div><div class="input-lbl">Image 2</div><div class="input-sub">Стиль / атмосфера</div></div></div>
+        <div class="input-box"><span class="input-emoji">🖼️</span><div><div class="input-lbl">Image 3–14</div><div class="input-sub">Додаткові деталі</div></div></div>
+        <div class="input-box"><span class="input-emoji">✍️</span><div><div class="input-lbl">Текст</div><div class="input-sub">Що взяти з кожного</div></div></div>
+      </div>
+      <div style="text-align:center; padding: 6px 0; font-size:18px; color:#888">↓</div>
+      <div class="output-box">
+        <span class="out-emoji">✅</span>
+        <div class="out-text">Нова сцена зі збереженим персонажем / стилем — нативно, в одному діалозі</div>
+      </div>
+    </div>
+
+    <div class="section-label">Thinking Mode — коли вмикати</div>
+    <div class="acc-list">
+      <div class="acc" id="t1">
+        <div class="acc-hdr" onclick="toggleAcc('t1')"><div class="acc-icon">⚡</div><div class="acc-info"><div class="acc-title">Minimal thinking — швидкість</div><div class="acc-sub">Прості сцени, одна фігура, чистий фон</div></div><span class="chevron" id="t1-ch">▼</span></div>
+        <div class="acc-body" id="t1-body"><div class="desc-text" style="margin-top:10px">Простий product shot, портрет на нейтральному фоні, lifestyle сцена з одним персонажем. Генерація ~3–5 секунд.</div><div class="tag-row"><span class="tag">Packshot</span><span class="tag">Простий портрет</span><span class="tag">Один персонаж</span><span class="tag">Швидка ітерація</span></div></div>
+      </div>
+      <div class="acc" id="t2">
+        <div class="acc-hdr" onclick="toggleAcc('t2')"><div class="acc-icon">🧠</div><div class="acc-info"><div class="acc-title">High thinking — точність</div><div class="acc-sub">Кілька персонажів, текст, складна композиція</div></div><span class="chevron" id="t2-ch">▼</span></div>
+        <div class="acc-body" id="t2-body"><div class="desc-text" style="margin-top:10px">Кілька персонажів у кадрі, читаємий текст/логотип, складна сцена з взаємодією об'єктів, точне збереження деталей костюму через кілька зображень. Модель "думає" перед генерацією. Генерація ~15–30 секунд.</div><div class="tag-row"><span class="tag">5 персонажів</span><span class="tag">Текст у кадрі</span><span class="tag">Складна сцена</span><span class="tag rec">Рекомендовано для character ref</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHARACTER REFERENCE -->
+  <div id="tab-character" style="display:none">
+    <div class="section-label">Як зберегти персонажа — покроковий workflow</div>
+
+    <div class="prompt-step">
+      <div class="step-label"><span class="step-num" style="background:#eaf3de;color:#3b6d11">1</span>Підготуй reference зображення</div>
+      <div class="desc-text">Ідеальний reference: фронтальний або 3/4 ракурс, нейтральний фон, добре освітлене обличчя, чіткий одяг. Якщо маєш кілька фото — прикріплюй всі (до 14). Більше ракурсів = краща консистентність.</div>
+      <div class="tag-row"><span class="tag hot">Мінімум 1 фото</span><span class="tag rec">Оптимально: 3–5 різних ракурсів</span><span class="tag">Максимум: 14 зображень</span></div>
+    </div>
+
+    <div class="prompt-step">
+      <div class="step-label"><span class="step-num" style="background:#e6f1fb;color:#185fa5">2</span>Базова формула промпту</div>
+      <div class="prompt-code">"Using [attached image] as reference for this person's appearance — maintain their exact face, hair color and style, and clothing. Place them in: [нова сцена]"</div>
+      <div class="prompt-note">⚠️ Ключове: "maintain their exact" — Nano Banana розуміє це як інструкцію збереження ідентичності</div>
+    </div>
+
+    <div class="prompt-step">
+      <div class="step-label"><span class="step-num" style="background:#faeeda;color:#854f0b">3</span>Реальні приклади промптів</div>
+
+      <div class="section-label" style="margin-top:8px">Рекламна кампанія — одна людина</div>
+      <div class="prompt-code">"[📎 фото моделі × 2 ракурси]<br><br>Use these two photos as character reference. Maintain exact face, hair (straight black bob), and red leather jacket with brass buttons.<br>Generate: editorial product shot, woman holding perfume bottle, marble table, soft morning window light, 4:5 ratio"</div>
+
+      <div class="section-label" style="margin-top:12px">Кілька персонажів у сцені</div>
+      <div class="prompt-code">"[📎 фото особи A] [📎 фото особи B] [📎 фото особи C]<br><br>Photo 1 = Sofia (preserve face, blonde hair, blue blazer)<br>Photo 2 = Marcus (preserve face, beard, denim jacket)<br>Photo 3 = Lena (preserve face, curly red hair)<br><br>Place all three together: casual coffee shop scene, wooden table, natural light from window, laughing together. Award-winning lifestyle photography, 16:9"</div>
+
+      <div class="section-label" style="margin-top:12px">Iterative editing — в тому ж діалозі</div>
+      <div class="prompt-code">"[після попередньої генерації]<br><br>Keep the same character and composition. Change only: background → rooftop at sunset, lighting → warm golden hour. Do NOT change her face, hair or clothing."</div>
+      <div class="prompt-note">💡 Nano Banana "пам'ятає" попередні зображення в сесії — не треба повторно прикріплювати reference</div>
+    </div>
+
+    <div class="prompt-step">
+      <div class="step-label"><span class="step-num" style="background:#faece7;color:#993c1d">4</span>Типові уточнення при drift</div>
+      <div class="prompt-code">"Regenerate the previous image. The face is slightly off — use the reference photo more strictly for facial features. Keep everything else the same."</div>
+      <div class="prompt-code" style="margin-top:6px">"The hair changed color. Correct: her hair should be exactly the same dark brown as in the reference photo. Do not alter the scene or lighting."</div>
+    </div>
+  </div>
+
+  <!-- STYLE REFERENCE -->
+  <div id="tab-style" style="display:none">
+    <div class="section-label">Style Reference — перенесення стилю</div>
+    <div class="desc-text">Nano Banana Pro дозволяє переносити <strong>візуальний стиль, кольорову палітру, текстури та атмосферу</strong> reference-зображення на нову генерацію. Особливо потужно для бренд-консистентності та серійного контенту.</div>
+
+    <div class="acc-list">
+      <div class="acc" id="s1">
+        <div class="acc-hdr" onclick="toggleAcc('s1')"><div class="acc-icon">🏷️</div><div class="acc-info"><div class="acc-title">Бренд-стиль для кампанії</div><div class="acc-sub">Єдина візуальна мова серії зображень</div></div><span class="chevron" id="s1-ch">▼</span></div>
+        <div class="acc-body" id="s1-body">
+          <div class="desc-text" style="margin-top:10px">Прикріплюєш 3–5 зображень у брендовому стилі клієнта і просиш "відтворити цю атмосферу" для нового product shot.</div>
+          <div class="prompt-code">"[📎 бренд-фото 1] [📎 бренд-фото 2] [📎 бренд-фото 3]<br><br>Use these images as style reference only — not the products or people in them. Extract: color palette (warm beige, terracotta, sage green), lighting style (soft diffused, golden hour feel), compositional mood (minimal, airy, editorial).<br><br>Generate: product shot of [новий продукт], wooden tray with linen cloth, same color temperature and mood as reference images"</div>
+          <div class="tag-row"><span class="tag">Серійний контент</span><span class="tag">Branded content</span><span class="tag">E-commerce</span></div>
+        </div>
+      </div>
+
+      <div class="acc" id="s2">
+        <div class="acc-hdr" onclick="toggleAcc('s2')"><div class="acc-icon">🎬</div><div class="acc-info"><div class="acc-title">Кінематографічний стиль</div><div class="acc-sub">Перенести "feel" фільму або режисера</div></div><span class="chevron" id="s2-ch">▼</span></div>
+        <div class="acc-body" id="s2-body">
+          <div class="desc-text" style="margin-top:10px">Прикріплюєш кадр з референсного фільму або фотографа. Nano Banana зчитує освітлення, колірну гаму та атмосферу.</div>
+          <div class="prompt-code">"[📎 reference кадр]<br><br>Apply the cinematographic style of this reference: color grading (desaturated, cool shadows, warm highlights), lighting direction (hard backlight from upper right), film grain texture.<br><br>Generate: portrait of a woman standing near window, urban background, 35mm film look. Do NOT copy the person from reference — only the visual style."</div>
+          <div class="tag-row"><span class="tag">Fashion editorial</span><span class="tag">Film-style content</span><span class="tag">Hero shots</span></div>
+        </div>
+      </div>
+
+      <div class="acc" id="s3">
+        <div class="acc-hdr" onclick="toggleAcc('s3')"><div class="acc-icon">🔄</div><div class="acc-info"><div class="acc-title">Character + Style Reference разом</div><div class="acc-sub">Найпотужніша комбінація</div></div><span class="chevron" id="s3-ch">▼</span></div>
+        <div class="acc-body" id="s3-body">
+          <div class="desc-text" style="margin-top:10px">Перший image = персонаж. Другий image = стиль. Текст пояснює що звідки брати. Це найчастіший реальний usecase.</div>
+          <div class="prompt-code">"[📎 фото персонажа — Image 1]<br>[📎 reference стилю — Image 2]<br><br>Image 1: character reference — maintain face, hair (wavy auburn, shoulder length), and freckles exactly.<br><br>Image 2: style reference only — extract the color palette (warm earth tones, golden hour light), not the person.<br><br>Generate: lifestyle shot, woman sitting in cafe, holding coffee, outdoor terrace, 4:5 ratio, thinking mode: high"</div>
+          <div class="tag-row"><span class="tag hot">Рекомендована комбінація</span><span class="tag">Virtual influencer</span><span class="tag">Серійний контент</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADVANCED -->
+  <div id="tab-advanced" style="display:none">
+    <div class="acc-list">
+
+      <div class="acc" id="a1">
+        <div class="acc-hdr" onclick="toggleAcc('a1')"><div class="acc-icon">🎭</div><div class="acc-info"><div class="acc-title">Virtual Influencer — повний pipeline</div><div class="acc-sub">Від першого зображення до серії контенту</div></div><span class="chevron" id="a1-ch">▼</span></div>
+        <div class="acc-body" id="a1-body">
+          <div class="section-label" style="margin-top:10px">Промпт для "народження" персонажа:</div>
+          <div class="prompt-code">"Generate a photorealistic portrait of a fictional woman, 26 years old, Korean-Italian heritage, sharp almond-shaped dark brown eyes, high cheekbones, straight black hair with subtle highlights, small scar above left eyebrow, confident expression. Studio lighting, 4K, front-facing, neutral gray background."</div>
+          <div class="section-label">Серійний контент з цим персонажем:</div>
+          <div class="prompt-code">"[📎 майстер-портрет × 3 варіанти]<br><br>These are reference photos of Mia, my virtual influencer. Maintain ALL physical traits exactly across all generations.<br><br>Generate 4 lifestyle scenes (one by one):<br>1. Morning coffee, marble kitchen, golden hour light<br>2. Gym workout, athletic wear, determined expression<br>3. City walk, autumn street, casual chic outfit<br>4. Evening event, elegant dress, warm restaurant lighting"</div>
+        </div>
+      </div>
+
+      <div class="acc" id="a2">
+        <div class="acc-hdr" onclick="toggleAcc('a2')"><div class="acc-icon">📦</div><div class="acc-info"><div class="acc-title">Реальний продукт + AI-модель</div><div class="acc-sub">Рекламний кадр з реальним товаром</div></div><span class="chevron" id="a2-ch">▼</span></div>
+        <div class="acc-body" id="a2-body">
+          <div class="desc-text" style="margin-top:10px">Найпопулярніший кейс для реклами. Клієнт дає фото продукту, ти генеруєш рекламний кадр з AI-моделлю.</div>
+          <div class="prompt-code">"[📎 фото продукту — Image 1]<br>[📎 reference моделі — Image 2]<br>[📎 стиль бренду — Image 3]<br><br>Image 1: This is the exact product (moisturizer bottle — preserve label, shape, color 100%, do not alter).<br>Image 2: Character reference — maintain woman's face and features exactly.<br>Image 3: Brand style — extract lighting mood and color temperature only.<br><br>Generate: woman applying moisturizer in front of mirror, morning bathroom, soft window light. Product must be clearly visible and unaltered. Thinking mode: high"</div>
+          <div class="tag-row"><span class="tag">Beauty</span><span class="tag">Fashion</span><span class="tag">FMCG реклама</span></div>
+        </div>
+      </div>
+
+      <div class="acc" id="a3">
+        <div class="acc-hdr" onclick="toggleAcc('a3')"><div class="acc-icon">🎬</div><div class="acc-info"><div class="acc-title">Storyboard / Keyframe для I2V</div><div class="acc-sub">Консистентний персонаж → відео через Kling/Veo</div></div><span class="chevron" id="a3-ch">▼</span></div>
+        <div class="acc-body" id="a3-body">
+          <div class="desc-text" style="margin-top:10px">Nano Banana генерує серію keyframes зі збереженим персонажем → кожен keyframe подається у Kling 3.0 або Veo 3.1 → відео-серія з консистентним персонажем.</div>
+          <div class="section-label">Крок 1 — Keyframes у Nano Banana:</div>
+          <div class="prompt-code">"[📎 character reference × 2]<br><br>Generate 5 keyframes for a video storyboard (one by one). Character must stay 100% consistent across all frames:<br><br>Frame 1: close-up face, neutral expression, morning light<br>Frame 2: medium shot, walking on street, confident stride<br>Frame 3: sitting in cafe, smiling, coffee in hand<br>Frame 4: looking at camera, dramatic backlight<br>Frame 5: side profile, golden hour, urban background<br><br>Each frame: cinematic, 16:9, photorealistic"</div>
+          <div class="section-label">Крок 2 — Кожен keyframe → Kling 3.0 / Veo 3.1:</div>
+          <div class="prompt-code">"Animate this keyframe: subtle camera drift left, character turns head slightly toward camera, hair moves gently in wind. 5 seconds, cinematic, minimal motion."</div>
+          <div class="tag-row"><span class="tag hot">Nano Banana → Kling 3.0</span><span class="tag hot">Nano Banana → Veo 3.1</span><span class="tag">Full ad pipeline</span></div>
+        </div>
+      </div>
+
+      <div class="acc" id="a4">
+        <div class="acc-hdr" onclick="toggleAcc('a4')"><div class="acc-icon">✏️</div><div class="acc-info"><div class="acc-title">Iterative editing — правки без перегенерації</div><div class="acc-sub">Nano Banana "пам'ятає" сесію</div></div><span class="chevron" id="a4-ch">▼</span></div>
+        <div class="acc-body" id="a4-body">
+          <div class="desc-text" style="margin-top:10px">Весь діалог зберігається в контексті. Не треба повторно прикріплювати reference після кожного запиту.</div>
+          <div class="prompt-code">"Keep everything. Change only the background to a rooftop at sunset."</div>
+          <div class="prompt-code" style="margin-top:6px">"Same composition. Adjust lighting: dramatic studio with hard shadows."</div>
+          <div class="prompt-code" style="margin-top:6px">"Keep the character and lighting. Change her outfit to casual — white linen shirt, beige trousers."</div>
+          <div class="prompt-code" style="margin-top:6px">"Zoom in on the face, 4:5 ratio, keep same lighting and expression."</div>
+          <div class="prompt-code" style="margin-top:6px">"Create a horizontal version (16:9) of the previous image, add more space on the right."</div>
+          <div class="prompt-note">💡 Для Midjourney кожен такий запит = новий промпт з нуля. Nano Banana = продовження розмови.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- VS OTHER MODELS -->
+  <div id="tab-vs" style="display:none">
+    <div class="section-label">Nano Banana Pro vs інші моделі — Character Consistency</div>
+    <div class="compare-grid">
+      <div class="cmp-card">
+        <div class="cmp-title">🍌 Nano Banana Pro <span style="font-size:10px;color:#3b6d11;background:#eaf3de;padding:2px 6px;border-radius:6px">Основний</span></div>
+        <div class="cmp-row"><span class="cmp-key">Reference input</span><span class="cmp-val win">до 14 зображень</span></div>
+        <div class="cmp-row"><span class="cmp-key">Консистентність осіб</span><span class="cmp-val win">до 5 одночасно</span></div>
+        <div class="cmp-row"><span class="cmp-key">Iterative editing</span><span class="cmp-val win">В одному діалозі</span></div>
+        <div class="cmp-row"><span class="cmp-key">Технічний поріг</span><span class="cmp-val win">Мінімальний</span></div>
+        <div class="cmp-row"><span class="cmp-key">Роздільність</span><span class="cmp-val win">4K нативно</span></div>
+        <div class="cmp-row"><span class="cmp-key">Де слабший</span><span class="cmp-val mid">Художній стиль (MJ краще)</span></div>
+      </div>
+      <div class="cmp-card">
+        <div class="cmp-title">🎨 Midjourney V8</div>
+        <div class="cmp-row"><span class="cmp-key">Reference input</span><span class="cmp-val mid">1–3 зображення</span></div>
+        <div class="cmp-row"><span class="cmp-key">Консистентність осіб</span><span class="cmp-val mid">1 персонаж (--cref)</span></div>
+        <div class="cmp-row"><span class="cmp-key">Iterative editing</span><span class="cmp-val lose">Новий промпт щоразу</span></div>
+        <div class="cmp-row"><span class="cmp-key">Технічний поріг</span><span class="cmp-val mid">Потрібні параметри</span></div>
+        <div class="cmp-row"><span class="cmp-key">Роздільність</span><span class="cmp-val win">2K нативно</span></div>
+        <div class="cmp-row"><span class="cmp-key">Де сильніший</span><span class="cmp-val win">Художня якість, стиль</span></div>
+      </div>
+      <div class="cmp-card">
+        <div class="cmp-title">🧬 SD + IP-Adapter</div>
+        <div class="cmp-row"><span class="cmp-key">Reference input</span><span class="cmp-val mid">1 обличчя (FaceID)</span></div>
+        <div class="cmp-row"><span class="cmp-key">Консистентність осіб</span><span class="cmp-val lose">1 особа (first-face limit)</span></div>
+        <div class="cmp-row"><span class="cmp-key">Iterative editing</span><span class="cmp-val lose">Вручну через ComfyUI</span></div>
+        <div class="cmp-row"><span class="cmp-key">Технічний поріг</span><span class="cmp-val lose">Дуже високий</span></div>
+        <div class="cmp-row"><span class="cmp-key">Роздільність</span><span class="cmp-val mid">Залежить від апарату</span></div>
+        <div class="cmp-row"><span class="cmp-key">Де сильніший</span><span class="cmp-val win">Точність обличчя</span></div>
+      </div>
+      <div class="cmp-card">
+        <div class="cmp-title">🎯 GPT Image 1.5</div>
+        <div class="cmp-row"><span class="cmp-key">Reference input</span><span class="cmp-val mid">Кілька в сесії</span></div>
+        <div class="cmp-row"><span class="cmp-key">Консистентність осіб</span><span class="cmp-val mid">1–2 (в сесії)</span></div>
+        <div class="cmp-row"><span class="cmp-key">Iterative editing</span><span class="cmp-val win">В одному діалозі</span></div>
+        <div class="cmp-row"><span class="cmp-key">Технічний поріг</span><span class="cmp-val win">Мінімальний</span></div>
+        <div class="cmp-row"><span class="cmp-key">Роздільність</span><span class="cmp-val mid">До 1024px</span></div>
+        <div class="cmp-row"><span class="cmp-key">Де сильніший</span><span class="cmp-val win">Рендеринг тексту</span></div>
+      </div>
+    </div>
+
+    <div class="section-label" style="margin-top:14px">Коли Nano Banana Pro — не найкращий вибір</div>
+    <div class="tips-grid">
+      <div class="tip"><div class="tip-icon">🎨</div><div class="tip-title">Потрібен унікальний художній стиль</div><div class="tip-text">Для ілюстрацій, anime, oil painting або editorial з сильним художнім характером — Midjourney V8 дає кращий результат.</div></div>
+      <div class="tip"><div class="tip-icon">🔬</div><div class="tip-title">Максимальна точність обличчя</div><div class="tip-text">SD + IP-Adapter FaceID точніше відтворює конкретне обличчя для virtual influencer де потрібна 100% ідентичність.</div></div>
+      <div class="tip"><div class="tip-icon">📚</div><div class="tip-title">50+ зображень у проєкті</div><div class="tip-text">Для великих комікс-проєктів або серіалів LoRA Training дає стабільніший результат на довгих дистанціях.</div></div>
+      <div class="tip"><div class="tip-icon">🔒</div><div class="tip-title">Повна приватність</div><div class="tip-text">Wan 2.2 або локальний SD — якщо контент не можна надсилати на зовнішні сервери Google.</div></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function showTab(name, btn) {
+  ['how','character','style','advanced','vs'].forEach(t => {
+    document.getElementById('tab-' + t).style.display = t === name ? 'block' : 'none';
+  });
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+}
+function toggleAcc(id) {
+  const body = document.getElementById(id+'-body');
+  const ch = document.getElementById(id+'-ch');
+  const acc = document.getElementById(id);
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  acc.style.borderColor = isOpen ? '' : '#888780';
+  ch.style.transform = isOpen ? '' : 'rotate(180deg)';
+}
+</script>
+</body>
+</html>

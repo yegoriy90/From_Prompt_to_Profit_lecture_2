@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product Shot v3 — AI Фотографія продукту</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f4f0; color: #1a1a18; min-height: 100vh; padding: 24px 16px; }
+.container { max-width: 780px; margin: 0 auto; }
+h1 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+.subtitle { font-size: 13px; color: #73726c; margin-bottom: 20px; }
+
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+.tab { padding: 5px 14px; border-radius: 20px; border: 1px solid #d3d1c7; background: transparent; color: #73726c; cursor: pointer; font-size: 12px; transition: all .15s; font-family: inherit; }
+.tab.active { background: #fff; color: #1a1a18; border-color: #888780; font-weight: 500; }
+.tab:hover:not(.active) { background: #eeecea; }
+
+.type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+@media (max-width: 520px) { .type-grid, .tools-grid { grid-template-columns: 1fr; } }
+.type-card { border: 1px solid #d3d1c7; border-radius: 12px; overflow: hidden; background: #fff; cursor: pointer; transition: border-color .15s; }
+.type-card:hover, .type-card.open { border-color: #888780; }
+.type-header { padding: 12px 14px; display: flex; align-items: center; gap: 10px; }
+.type-icon { font-size: 20px; flex-shrink: 0; }
+.type-info { flex: 1; }
+.type-name { font-size: 13px; font-weight: 500; color: #1a1a18; }
+.type-sub { font-size: 11px; color: #888780; margin-top: 2px; }
+.chevron { font-size: 10px; color: #888; transition: transform .2s; }
+.type-body { display: none; padding: 0 14px 12px; border-top: 1px solid #eeecea; }
+.type-body.open { display: block; }
+.type-desc { font-size: 12px; color: #5f5e5a; line-height: 1.5; margin: 10px 0 8px; }
+.prompt-box { background: #f5f4f0; border: 1px solid #d3d1c7; border-radius: 8px; padding: 10px 12px; }
+.prompt-label { font-size: 10px; font-weight: 500; color: #888780; margin-bottom: 4px; }
+.prompt-text { font-size: 11px; color: #3b6d11; line-height: 1.6; font-style: italic; }
+.tag-row { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+.tag { font-size: 10px; padding: 2px 7px; border-radius: 8px; background: #fff; border: 1px solid #d3d1c7; color: #5f5e5a; }
+
+.workflow { display: flex; flex-direction: column; gap: 6px; }
+.wf-step { border: 1px solid #d3d1c7; border-radius: 12px; padding: 12px 14px; background: #fff; cursor: pointer; transition: border-color .15s; }
+.wf-step:hover { border-color: #888780; }
+.wf-header { display: flex; align-items: center; gap: 10px; }
+.wf-num { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; flex-shrink: 0; }
+.wf-title { font-size: 13px; font-weight: 500; color: #1a1a18; flex: 1; }
+.wf-time { font-size: 11px; color: #888780; }
+.wf-body { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid #eeecea; }
+.wf-body.open { display: block; }
+.wf-desc { font-size: 12px; color: #5f5e5a; line-height: 1.5; margin-bottom: 8px; }
+.wf-tools { display: flex; flex-wrap: wrap; gap: 4px; }
+.tool-tag { font-size: 11px; padding: 3px 9px; border-radius: 8px; border: 1px solid #d3d1c7; color: #5f5e5a; background: #f5f4f0; }
+.tool-tag.rec { background: #eaf3de; border-color: #c0dd97; color: #3b6d11; }
+.tool-tag.hot { background: #faeeda; border-color: #fac775; color: #854f0b; font-weight: 500; }
+
+.tools-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.tool-card { border: 1px solid #d3d1c7; border-radius: 12px; padding: 12px 14px; background: #fff; }
+.tool-card.featured { border-color: #fac775; background: #fffbf5; }
+.tool-name { font-size: 13px; font-weight: 500; color: #1a1a18; margin-bottom: 2px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.tool-url { font-size: 11px; color: #888780; margin-bottom: 6px; }
+.tool-desc { font-size: 11px; color: #5f5e5a; line-height: 1.4; margin-bottom: 8px; }
+.tool-best { font-size: 11px; color: #5f5e5a; }
+.tool-best span { font-weight: 500; color: #1a1a18; }
+.price-badge { display: inline-block; font-size: 10px; padding: 2px 7px; border-radius: 8px; background: #f5f4f0; border: 1px solid #d3d1c7; color: #5f5e5a; margin-bottom: 6px; }
+.hot-badge { font-size: 10px; padding: 2px 7px; border-radius: 8px; background: #faeeda; border: 1px solid #fac775; color: #854f0b; }
+
+.mistake-list { display: flex; flex-direction: column; gap: 8px; }
+.mistake { border: 1px solid #d3d1c7; border-radius: 12px; padding: 12px 14px; background: #fff; }
+.m-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.m-icon { font-size: 16px; }
+.m-title { font-size: 13px; font-weight: 500; color: #1a1a18; }
+.m-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px; }
+@media (max-width: 520px) { .m-cols { grid-template-columns: 1fr; } }
+.m-col { border-radius: 8px; padding: 8px 10px; }
+.m-bad { background: #fcebeb; }
+.m-good { background: #eaf3de; }
+.m-col-label { font-size: 10px; font-weight: 500; margin-bottom: 4px; }
+.m-bad .m-col-label { color: #a32d2d; }
+.m-good .m-col-label { color: #3b6d11; }
+.m-text { font-size: 11px; color: #5f5e5a; line-height: 1.4; font-style: italic; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Product Shot</h1>
+  <p class="subtitle">AI-фотографія продукту — типи, workflow, інструменти, помилки</p>
+
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('types',this)">📦 Типи знімків</button>
+    <button class="tab" onclick="showTab('workflow',this)">⚙️ Workflow</button>
+    <button class="tab" onclick="showTab('tools',this)">🛠️ Інструменти</button>
+    <button class="tab" onclick="showTab('mistakes',this)">⚠️ Помилки</button>
+  </div>
+
+  <!-- TYPES -->
+  <div id="tab-types">
+    <div class="type-grid">
+      <div class="type-card" id="tc1">
+        <div class="type-header" onclick="toggleType('tc1')"><div class="type-icon">⬜</div><div class="type-info"><div class="type-name">Clean / Packshot</div><div class="type-sub">Білий або нейтральний фон</div></div><span class="chevron" id="tc1-ch">▼</span></div>
+        <div class="type-body" id="tc1-body">
+          <div class="type-desc">Класичний product shot для каталогів, Amazon, Rozetka. Продукт — єдиний герой. Чисте тло, правильні тіні, без відволікань. Базовий формат для будь-якого e-commerce.</div>
+          <div class="prompt-box"><div class="prompt-label">Промпт-формула:</div><div class="prompt-text">"[продукт], studio packshot, pure white background, soft box lighting from upper left, accurate shadows, high-resolution product photography, 4:5 ratio"</div></div>
+          <div class="tag-row"><span class="tag">Amazon</span><span class="tag">Rozetka</span><span class="tag">Каталог</span><span class="tag">FLUX.2</span><span class="tag">Claid AI</span></div>
+        </div>
+      </div>
+      <div class="type-card" id="tc2">
+        <div class="type-header" onclick="toggleType('tc2')"><div class="type-icon">🌿</div><div class="type-info"><div class="type-name">Lifestyle Shot</div><div class="type-sub">Продукт у контексті використання</div></div><span class="chevron" id="tc2-ch">▼</span></div>
+        <div class="type-body" id="tc2-body">
+          <div class="type-desc">Продукт у реальному середовищі: на столі, в руках, у кімнаті. Найефективніший для Instagram, Pinterest та лендінгів. Ключ: оточення має посилювати продукт, а не відволікати.</div>
+          <div class="prompt-box"><div class="prompt-label">Промпт-формула:</div><div class="prompt-text">"[продукт] on [поверхня: marble counter / wooden table / linen cloth], surrounded by [контекстні об'єкти], soft morning light from window, lifestyle photography, warm tones, shallow depth of field"</div></div>
+          <div class="tag-row"><span class="tag">Instagram</span><span class="tag">Pinterest</span><span class="tag">Лендінг</span><span class="tag">Nano Banana ⭐</span><span class="tag">GPT Image</span><span class="tag">Seedream</span></div>
+        </div>
+      </div>
+      <div class="type-card" id="tc3">
+        <div class="type-header" onclick="toggleType('tc3')"><div class="type-icon">🔎</div><div class="type-info"><div class="type-name">Detail / Macro Shot</div><div class="type-sub">Фактура, матеріал, деталь</div></div><span class="chevron" id="tc3-ch">▼</span></div>
+        <div class="type-body" id="tc3-body">
+          <div class="type-desc">Екстремальний крупний план для передачі якості матеріалу: шкіра, тканина, метал, кристали. Замінює дотик у цифровій торгівлі. Критично для преміум-сегменту та ювелірних виробів. Nano Banana тут не додає — краще використовувати FLUX.2 для точного збереження текстур.</div>
+          <div class="prompt-box"><div class="prompt-label">Промпт-формула:</div><div class="prompt-text">"extreme macro shot of [матеріал/деталь], [продукт], incredible texture detail, 100mm macro lens, razor-sharp focus, subtle side lighting to emphasize texture, neutral background"</div></div>
+          <div class="tag-row"><span class="tag">Luxury</span><span class="tag">Jewelry</span><span class="tag">Fashion</span><span class="tag">FLUX.2</span><span class="tag">Midjourney</span></div>
+        </div>
+      </div>
+      <div class="type-card" id="tc4">
+        <div class="type-header" onclick="toggleType('tc4')"><div class="type-icon">👗</div><div class="type-info"><div class="type-name">On-Model Shot</div><div class="type-sub">Продукт на моделі</div></div><span class="chevron" id="tc4-ch">▼</span></div>
+        <div class="type-body" id="tc4-body">
+          <div class="type-desc">Одяг, аксесуари, ювелірні вироби на живій моделі. AI-моделі зменшують вартість фотосесій на 80–90%. Вказуй розмір, тип тіла та позу для реалізму. Увага: не використовуй реальних людей як reference без дозволу.</div>
+          <div class="prompt-box"><div class="prompt-label">Промпт-формула:</div><div class="prompt-text">"[одяг/аксесуар] worn by a [вік] [стать] model, [поза: standing / walking / sitting], editorial fashion photography, studio lighting, full body / three-quarter / close-up shot"</div></div>
+          <div class="tag-row"><span class="tag">Fashion</span><span class="tag">Apparel</span><span class="tag">Nano Banana ⭐</span><span class="tag">Photoroom</span><span class="tag">Claid AI</span></div>
+        </div>
+      </div>
+      <div class="type-card" id="tc5">
+        <div class="type-header" onclick="toggleType('tc5')"><div class="type-icon">🎬</div><div class="type-info"><div class="type-name">Hero / Campaign Shot</div><div class="type-sub">Головний образ для реклами</div></div><span class="chevron" id="tc5-ch">▼</span></div>
+        <div class="type-body" id="tc5-body">
+          <div class="type-desc">Flagship-зображення для реклами, обкладинок, банерів. Поєднує продукт із потужним настроєм та атмосферою. Розповідає історію бренду за одну секунду.</div>
+          <div class="prompt-box"><div class="prompt-label">Промпт-формула:</div><div class="prompt-text">"[продукт] as hero of the frame, [настрій: dramatic / luxurious / energetic / minimal], [кольорова гама], cinematic composition, professional advertising photography, aspirational brand feel"</div></div>
+          <div class="tag-row"><span class="tag">Реклама</span><span class="tag">Банери</span><span class="tag">OOH</span><span class="tag">Nano Banana ⭐</span><span class="tag">Midjourney</span><span class="tag">Uni-1</span></div>
+        </div>
+      </div>
+      <div class="type-card" id="tc6">
+        <div class="type-header" onclick="toggleType('tc6')"><div class="type-icon">🌊</div><div class="type-info"><div class="type-name">Creative / Surreal Shot</div><div class="type-sub">Надреалістична сцена</div></div><span class="chevron" id="tc6-ch">▼</span></div>
+        <div class="type-body" id="tc6-body">
+          <div class="type-desc">Продукт у фізично неможливій або сюрреалістичній сцені. Максимальна увага у соцмережах. Парфум у хмарах, годинник під водою. AI тут незамінний — таке знімати надто дорого.</div>
+          <div class="prompt-box"><div class="prompt-label">Промпт-формула:</div><div class="prompt-text">"[продукт] floating / submerged in [середовище: clouds / crystal water / golden sand / flower petals / ice], surreal product photography, hyperrealistic, dramatic lighting, 8K detail"</div></div>
+          <div class="tag-row"><span class="tag">Соцмережі</span><span class="tag">Viral</span><span class="tag">Luxury</span><span class="tag">Midjourney</span><span class="tag">FLUX.2</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WORKFLOW -->
+  <div id="tab-workflow" style="display:none">
+    <div class="workflow">
+      <div class="wf-step" id="wf1"><div class="wf-header" onclick="toggleWf('wf1')"><div class="wf-num" style="background:#eaf3de;color:#3b6d11">1</div><div class="wf-title">Підготовка вхідного фото</div><span class="wf-time">~5 хв</span><span class="chevron" id="wf1-ch">▼</span></div><div class="wf-body" id="wf1-body"><div class="wf-desc">Зроби базову фотографію продукту на чистому (ідеально — білому) фоні. Природне або LED освітлення. Смартфону достатньо — AI виправить технічні недоліки. <strong>Правило:</strong> чим якісніший input, тим кращий output.</div><div class="wf-tools"><span class="tool-tag">Смартфон (мінімум)</span><span class="tool-tag">Білий аркуш паперу як фон</span><span class="tool-tag rec">Денне світло з вікна</span></div></div></div>
+      <div class="wf-step" id="wf2"><div class="wf-header" onclick="toggleWf('wf2')"><div class="wf-num" style="background:#e6f1fb;color:#185fa5">2</div><div class="wf-title">Видалення фону</div><span class="wf-time">~1 хв</span><span class="chevron" id="wf2-ch">▼</span></div><div class="wf-body" id="wf2-body"><div class="wf-desc">Прибираємо оригінальний фон, отримуємо чистий PNG з прозорістю. Це база для будь-якого подальшого кроку — нового фону, сцени або композиції.</div><div class="wf-tools"><span class="tool-tag rec">remove.bg</span><span class="tool-tag rec">Photoroom</span><span class="tool-tag">Adobe Firefly</span><span class="tool-tag">Claid AI</span><span class="tool-tag">FLUX.2 Kontext</span></div></div></div>
+      <div class="wf-step" id="wf3"><div class="wf-header" onclick="toggleWf('wf3')"><div class="wf-num" style="background:#faeeda;color:#854f0b">3</div><div class="wf-title">Генерація фону / сцени</div><span class="wf-time">~5–10 хв</span><span class="chevron" id="wf3-ch">▼</span></div><div class="wf-body" id="wf3-body"><div class="wf-desc">Генеруємо новий фон або цілу сцену під продукт. Можна описати словами або використати reference-зображення. Генеруй 5–10 варіантів і вибирай найсильніший.</div><div class="wf-tools"><span class="tool-tag hot">Nano Banana Pro</span><span class="tool-tag rec">GPT Image 1.5</span><span class="tool-tag rec">FLUX.2</span><span class="tool-tag">Seedream 5.0</span><span class="tool-tag">Pebblely</span><span class="tool-tag">Claid AI</span></div></div></div>
+      <div class="wf-step" id="wf4"><div class="wf-header" onclick="toggleWf('wf4')"><div class="wf-num" style="background:#faece7;color:#993c1d">4</div><div class="wf-title">Compositing — вставка продукту</div><span class="wf-time">~10 хв</span><span class="chevron" id="wf4-ch">▼</span></div><div class="wf-body" id="wf4-body"><div class="wf-desc">Вставляємо PNG продукту у згенерований фон. Головна задача — правильні тіні та освітлення. Nano Banana Pro особливо сильний у злитті зображень — нативно розуміє освітлення та перспективу.</div><div class="wf-tools"><span class="tool-tag hot">Nano Banana Pro</span><span class="tool-tag rec">Adobe Photoshop + Firefly</span><span class="tool-tag">Photoroom AI Shadows</span><span class="tool-tag">FLUX.2 Kontext</span><span class="tool-tag rec">Claid AI</span></div></div></div>
+      <div class="wf-step" id="wf5"><div class="wf-header" onclick="toggleWf('wf5')"><div class="wf-num" style="background:#eeedfe;color:#534ab7">5</div><div class="wf-title">Ретуш та color grading</div><span class="wf-time">~5–10 хв</span><span class="chevron" id="wf5-ch">▼</span></div><div class="wf-body" id="wf5-body"><div class="wf-desc">Фінальне зведення кольорів продукту та фону в єдину гаму. Nano Banana Pro через iterative prompting дозволяє коригувати колір та тон без виходу з платформи.</div><div class="wf-tools"><span class="tool-tag hot">Nano Banana Pro (iterative editing)</span><span class="tool-tag rec">Lightroom</span><span class="tool-tag">Adobe Photoshop</span><span class="tool-tag">Topaz Photo AI</span><span class="tool-tag rec">Claid AI Enhance</span></div></div></div>
+      <div class="wf-step" id="wf6"><div class="wf-header" onclick="toggleWf('wf6')"><div class="wf-num" style="background:#e1f5ee;color:#0f6e56">6</div><div class="wf-title">Upscale та експорт</div><span class="wf-time">~2–5 хв</span><span class="chevron" id="wf6-ch">▼</span></div><div class="wf-body" id="wf6-body"><div class="wf-desc">Magnific — найкращий upscaler для product photography: не просто збільшує, а домальовує реалістичні деталі — текстури, пори шкіри, нитки тканини. Nano Banana Pro підтримує нативний вивід до 4K без upscaler. Формати: WebP для вебу, PNG для прозорості, TIFF для друку.</div><div class="wf-tools"><span class="tool-tag hot">Magnific AI (найкращий upscaler)</span><span class="tool-tag rec">Topaz Gigapixel AI</span><span class="tool-tag">Nano Banana Pro (нативний 4K)</span><span class="tool-tag">Claid AI Upscale</span><span class="tool-tag">Photoroom</span><span class="tool-tag rec">Squoosh (для WebP)</span></div></div></div>
+    </div>
+  </div>
+
+  <!-- TOOLS -->
+  <div id="tab-tools" style="display:none">
+    <div class="tools-grid">
+      <div class="tool-card featured">
+        <div class="tool-name">Nano Banana Pro <span class="hot-badge">основний</span></div>
+        <div class="tool-url">ai.google.dev / Gemini API</div>
+        <span class="price-badge">$0.067–$0.151 / зображення</span>
+        <div class="tool-desc">Найшвидша та найточніша модель для product photography у 2026. Лідируючий Elo-рейтинг (1360). Нативна 4K роздільність, злиття зображень з реалістичним освітленням, iterative редагування в діалозі.</div>
+        <div class="tool-best">Ідеально для: <span>lifestyle, compositing, hero shots, on-model, ітеративне редагування</span></div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-name">Claid AI</div>
+        <div class="tool-url">claid.ai</div>
+        <span class="price-badge">від $15/міс</span>
+        <div class="tool-desc">Спеціалізована платформа для e-commerce фото. Навчена виключно на product photography — зберігає логотипи, форму та брендинг продукту краще за генеральні моделі.</div>
+        <div class="tool-best">Ідеально для: <span>каталоги, Amazon, Shopify, batch-обробка</span></div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-name">Photoroom</div>
+        <div class="tool-url">photoroom.com</div>
+        <span class="price-badge">від $12.99/міс</span>
+        <div class="tool-desc">Mobile-first платформа з AI Shadows, Batch Mode та Virtual Models для одягу. Обробляє сотні зображень одночасно з єдиним стилем.</div>
+        <div class="tool-best">Ідеально для: <span>fashion, масовий каталог, мобільний workflow</span></div>
+      </div>
+      <div class="tool-card featured">
+        <div class="tool-name">Magnific AI <span class="hot-badge">upscaler №1</span></div>
+        <div class="tool-url">magnific.ai</div>
+        <span class="price-badge">від $39/міс</span>
+        <div class="tool-desc">Найкращий upscaler для product photography: не просто збільшує зображення, а домальовує реалістичні деталі — текстури тканини, пори шкіри, відблиски металу. До 16× збільшення.</div>
+        <div class="tool-best">Ідеально для: <span>luxury, fashion, друк, фінальна обробка</span></div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-name">Adobe Firefly + Photoshop</div>
+        <div class="tool-url">adobe.com/firefly</div>
+        <span class="price-badge">від $55/міс (CC)</span>
+        <div class="tool-desc">Generative Fill та AI Background прямо у Photoshop. Комерційно безпечна ліцензія. Повний layer-based контроль + AI генерація = найгнучкіший інструмент для профі.</div>
+        <div class="tool-best">Ідеально для: <span>складні compositing, enterprise, бренд-контроль</span></div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-name">FLUX.2 Kontext</div>
+        <div class="tool-url">fal.ai / replicate.com</div>
+        <span class="price-badge">pay-per-use ~$0.03</span>
+        <div class="tool-desc">Найреалістичніша генеративна модель для product shots. Ідеально передає матеріали: скло, метал, шкіра, вода. Hex-точні кольори — незамінний для бренд-контролю.</div>
+        <div class="tool-best">Ідеально для: <span>luxury, фотореалізм, macro, складні матеріали</span></div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-name">Pebblely</div>
+        <div class="tool-url">pebblely.com</div>
+        <span class="price-badge">від $19/міс</span>
+        <div class="tool-desc">Фокусований генератор lifestyle-фонів. Завантажуєш packshot → обираєш тему → отримуєш варіанти. Ідеально для малого бізнесу без дизайнера.</div>
+        <div class="tool-best">Ідеально для: <span>Etsy, малий бізнес, швидкий контент</span></div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-name">Omi (Virtual Photography)</div>
+        <div class="tool-url">omi.so</div>
+        <span class="price-badge">Enterprise</span>
+        <div class="tool-desc">Створює 3D digital twin продукту — потім рендерить нескінченну кількість зображень і відео з повним контролем. Найвища повторюваність результату.</div>
+        <div class="tool-best">Ідеально для: <span>luxury, великі SKU-каталоги, відеореклама</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MISTAKES -->
+  <div id="tab-mistakes" style="display:none">
+    <div class="mistake-list">
+      <div class="mistake"><div class="m-header"><span class="m-icon">💡</span><span class="m-title">Тіні та відбиття</span></div><div class="m-cols"><div class="m-col m-bad"><div class="m-col-label">Помилка</div><div class="m-text">Продукт вставлений у сцену без тіні — виглядає як колаж, "летить у повітрі"</div></div><div class="m-col m-good"><div class="m-col-label">Як правильно</div><div class="m-text">Завжди додавай "cast shadow" або "drop shadow" у промпт. Nano Banana додає тіні автоматично при compositing. У PS — окремий shadow layer з blur</div></div></div></div>
+      <div class="mistake"><div class="m-header"><span class="m-icon">🎨</span><span class="m-title">Колір продукту змінюється</span></div><div class="m-cols"><div class="m-col m-bad"><div class="m-col-label">Помилка</div><div class="m-text">AI змінює точний колір продукту — бренд-колір стає іншим відтінком</div></div><div class="m-col m-good"><div class="m-col-label">Як правильно</div><div class="m-text">Використовуй Claid або FLUX.2 з hex-кодом. Або iterative editing у Nano Banana: "keep exact product color, only change background"</div></div></div></div>
+      <div class="mistake"><div class="m-header"><span class="m-icon">🔤</span><span class="m-title">Текст і логотип спотворені</span></div><div class="m-cols"><div class="m-col m-bad"><div class="m-col-label">Помилка</div><div class="m-text">AI генерує нечитабельний або неправильний текст на упаковці замість реального логотипу</div></div><div class="m-col m-good"><div class="m-col-label">Як правильно</div><div class="m-text">Не генеруй продукт з текстом — вставляй через compositing. Або Ideogram 3.0 для текстових елементів. GPT Image 1.5 та Nano Banana — найкращі для тексту серед генеративних</div></div></div></div>
+      <div class="mistake"><div class="m-header"><span class="m-icon">📐</span><span class="m-title">Пропорції і масштаб</span></div><div class="m-cols"><div class="m-col m-bad"><div class="m-col-label">Помилка</div><div class="m-text">Продукт виглядає занадто великим або малим відносно оточення — порушується сприйняття реальності</div></div><div class="m-col m-good"><div class="m-col-label">Як правильно</div><div class="m-text">Вказуй масштабний об'єкт у промпті: "next to a coffee cup", "on a hand". У Nano Banana — описуй розмір явно в iterative кроці</div></div></div></div>
+      <div class="mistake"><div class="m-header"><span class="m-icon">💎</span><span class="m-title">Втрата деталізації матеріалу</span></div><div class="m-cols"><div class="m-col m-bad"><div class="m-col-label">Помилка</div><div class="m-text">Шкіра виглядає як пластик, скло — непрозоре, метал — матовий. AI згладжує текстури</div></div><div class="m-col m-good"><div class="m-col-label">Як правильно</div><div class="m-text">"Glossy glass with internal reflections", "genuine leather with visible grain". Після генерації — Magnific AI для відновлення мікродеталей при upscale</div></div></div></div>
+      <div class="mistake"><div class="m-header"><span class="m-icon">🔄</span><span class="m-title">Мало варіантів генерації</span></div><div class="m-cols"><div class="m-col m-bad"><div class="m-col-label">Помилка</div><div class="m-text">Беруть перший або другий результат — не бачать кращих варіантів</div></div><div class="m-col m-good"><div class="m-col-label">Як правильно</div><div class="m-text">Генеруй мінімум 5–10 варіантів. Nano Banana підтримує batch generation — кілька варіантів за один запит</div></div></div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showTab(name, btn) {
+  ['types','workflow','tools','mistakes'].forEach(t => {
+    document.getElementById('tab-' + t).style.display = t === name ? 'block' : 'none';
+  });
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+}
+function toggleType(id) {
+  const body = document.getElementById(id + '-body');
+  const ch = document.getElementById(id + '-ch');
+  const card = document.getElementById(id);
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  card.classList.toggle('open', !isOpen);
+  ch.style.transform = isOpen ? '' : 'rotate(180deg)';
+}
+function toggleWf(id) {
+  const body = document.getElementById(id + '-body');
+  const ch = document.getElementById(id + '-ch');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  ch.style.transform = isOpen ? '' : 'rotate(180deg)';
+}
+</script>
+</body>
+</html>
